@@ -11,7 +11,9 @@
     
     <Description>ONNX format parsing and manipulation in C#.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    
+
+    <PackageIcon>packageIcon.png</PackageIcon>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)packageIcon.png</PackageIconFullPath>
     <PackageTags>onnx</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/nietras/OnnxSharp</PackageProjectUrl>
