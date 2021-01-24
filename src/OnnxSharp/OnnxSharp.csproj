@@ -1,0 +1,20 @@
+<Project>
+  <!-- Custom properties need to be included before the Sdk.props 
+       The Directory.Build.props way of doing this would have to be replicated in multiple places,
+       so instead using the old props customization trick but define it before Sdk.props. -->
+  <Import Project="../Project.Output.Library.props" />
+  
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description></Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.14.0" />
+    <!--<PackageReference Include="Google.Protobuf.Tools" Version="3.14.0" />-->
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

@@ -1,0 +1,38 @@
+﻿<Project>
+  <!-- Custom properties need to be included before the Sdk.props 
+       The Directory.Build.props way of doing this would have to be replicated in multiple places,
+       so instead using the old props customization trick but define it before Sdk.props. -->
+  <Import Project="../Project.Output.Test.props" />
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net461;net50</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Test file from: https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx -->
+    <EmbeddedResource Include="mnist-8.onnx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnnxSharp\OnnxSharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+  </ItemGroup>
+
+  <!-- Change logical name of all embedded resources to be like file system paths. -->
+  <Target Name="ModifyEmbeddedResourceNames" BeforeTargets="CreateManifestResourceNames">
+    <ItemGroup>
+      <EmbeddedResource>
+        <LogicalName>$([System.String]::new('%(EmbeddedResource.Identity)').Replace('\','/'))</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

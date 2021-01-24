@@ -1,0 +1,31 @@
+﻿<Project>
+  <!-- Custom properties need to be included before the Sdk.props 
+       The Directory.Build.props way of doing this would have to be replicated in multiple places,
+       so instead using the old props customization trick but define it before Sdk.props. -->
+  <Import Project="../Project.Output.Executable.props" />
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net50</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="mnist-8.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.14.0" />
+    <!--<PackageReference Include="Google.Protobuf.Tools" Version="3.14.0" />-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnnxSharp\OnnxSharp.csproj" />
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

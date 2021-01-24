@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxSharp", "src\OnnxSharp\OnnxSharp.csproj", "{226093F1-29E7-477D-B7D6-9662B94A41D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnnxSharpConsole", "src\OnnxSharpConsole\OnnxSharpConsole.csproj", "{1EC63E50-3866-4148-BCC1-54561A564D38}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{604A7FA2-17D1-4B9E-B1D3-15F186389B0B}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		all.ps1 = all.ps1
+		build.ps1 = build.ps1
+		clean.ps1 = clean.ps1
+		global.json = global.json
+		LICENSE = LICENSE
+		nuget.config = nuget.config
+		pack.ps1 = pack.ps1
+		rename.ps1 = rename.ps1
+		restore.ps1 = restore.ps1
+		test.ps1 = test.ps1
+		update.ps1 = update.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8727AD59-4D98-463D-B4F9-48EB2AC5F8F8}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Project.Output.Common.props = src\Project.Output.Common.props
+		src\Project.Output.Executable.props = src\Project.Output.Executable.props
+		src\Project.Output.Library.props = src\Project.Output.Library.props
+		src\Project.Output.Test.props = src\Project.Output.Test.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxSharp.Test", "src\OnnxSharp.Test\OnnxSharp.Test.csproj", "{33CFFE3C-7846-419C-89B7-00A512949546}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{226093F1-29E7-477D-B7D6-9662B94A41D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226093F1-29E7-477D-B7D6-9662B94A41D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226093F1-29E7-477D-B7D6-9662B94A41D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226093F1-29E7-477D-B7D6-9662B94A41D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EC63E50-3866-4148-BCC1-54561A564D38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EC63E50-3866-4148-BCC1-54561A564D38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EC63E50-3866-4148-BCC1-54561A564D38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EC63E50-3866-4148-BCC1-54561A564D38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33CFFE3C-7846-419C-89B7-00A512949546}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33CFFE3C-7846-419C-89B7-00A512949546}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33CFFE3C-7846-419C-89B7-00A512949546}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33CFFE3C-7846-419C-89B7-00A512949546}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {013E7AA1-9947-4C4E-B7EA-78F4524777AB}
+	EndGlobalSection
+EndGlobal
