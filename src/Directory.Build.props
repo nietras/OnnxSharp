@@ -1,0 +1,16 @@
+<!-- https://docs.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019 -->
+<Project>
+  <PropertyGroup>
+    <Authors>nietras</Authors>
+    <Copyright>Copyright © nietras 2021</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0</FileVersion>
+    <InformationalVersion>$(FileVersion)</InformationalVersion>
+    <PackageVersion>$(InformationalVersion)</PackageVersion>
+
+    <!--https://blog.paranoidcoding.com/2016/04/05/deterministic-builds-in-roslyn.html-->
+    <Deterministic>true</Deterministic>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+</Project>

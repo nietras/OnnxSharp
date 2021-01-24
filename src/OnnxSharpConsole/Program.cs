@@ -10,7 +10,8 @@ namespace OnnxSharpConsole
         static void Main(string[] args)
         {
             // Examples see https://github.com/onnx/models
-            var onnxFileName = @"C:\git\fnd\onnxruntimeextensions\build\IHFood.OnnxRuntimeProfiler_AnyCPU_Debug\TR-CntkModel-SV-4.0.0-remove-init.onnx";
+            //var onnxFileName = @"C:\git\fnd\onnxruntimeextensions\build\TR-CntkModel-SV-4.0.0-remove-init.onnx";
+            var onnxFileName = @"mnist-8.onnx";
             using (var file = File.OpenRead(onnxFileName))
             {
                 var model = Onnx.ModelProto.Parser.ParseFrom(file);
@@ -24,32 +25,25 @@ namespace OnnxSharpConsole
                 {
                     var shape = value.Type.TensorType.Shape;
                     var dims = shape.Dim;
-                    dims[0].DimValue = -1;
-                    //shape.Dim = dims;
-                    // TODO: Change shape
-                    value.Type.TensorType.Shape = shape;
+                    var dim = dims[0];
+                    //dim.DimValue = -1;
+                    dim.ClearValue();
+                    dim.DimValue = -1; // Or don't set it
+                    //dim.DimParam = "None"; // Or don't set it, unset dimension means dynamic
                 }
 
-                //foreach (var input in inputs)
-                //{
-                //    var shape = input.Type.TensorType.Shape;
-                //}
-                //var nodes = graph.Node;
-                //foreach (var node in nodes)
-                //{
-                //    var inputNames = node.Input;
-                //}
-                using (var outputFile = File.Create(onnxFileName + "NewDynamic.onnx"))
+                var fileNameSuffix = "-dynamic-leading-dimension";
+                var onnxOutputFilePath = Path.GetFileNameWithoutExtension(onnxFileName) + fileNameSuffix + ".onnx";
+                using (var outputFile = File.Create(onnxOutputFilePath))
                 {
                     model.WriteTo(outputFile);
                 }
 
-                using (var output = new StreamWriter(onnxFileName + "New.json"))
+                var jsonOnnxOutputFilePath = Path.GetFileNameWithoutExtension(onnxFileName) + fileNameSuffix + ".json";
+                using (var output = new StreamWriter(jsonOnnxOutputFilePath))
                 {
                     var fmt = new JsonFormatter(JsonFormatter.Settings.Default);
                     fmt.Format(model, output);
-                    //var stream = new CodedOutputStream();
-                    //model.WriteTo(output);
                 }
             }
         }
