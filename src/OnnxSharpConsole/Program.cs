@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using Google.Protobuf;
 
@@ -10,9 +9,12 @@ namespace OnnxSharpConsole
         static void Main(string[] args)
         {
             // Examples see https://github.com/onnx/models
-            //var onnxFileName = @"C:\git\fnd\onnxruntimeextensions\build\TR-CntkModel-SV-4.0.0-remove-init.onnx";
-            var onnxFileName = @"mnist-8.onnx";
-            using (var file = File.OpenRead(onnxFileName))
+            var onnxInputFilePath = @"mnist-8.onnx";
+
+            var onnxInputFileName = Path.GetFileNameWithoutExtension(onnxInputFilePath);
+            var outputDirectory = Path.GetDirectoryName(onnxInputFilePath);
+
+            using (var file = File.OpenRead(onnxInputFilePath))
             {
                 var model = Onnx.ModelProto.Parser.ParseFrom(file);
                 var graph = model.Graph;
@@ -33,13 +35,15 @@ namespace OnnxSharpConsole
                 }
 
                 var fileNameSuffix = "-dynamic-leading-dimension";
-                var onnxOutputFilePath = Path.GetFileNameWithoutExtension(onnxFileName) + fileNameSuffix + ".onnx";
+                var outputFilePathPrefix = Path.Combine(outputDirectory, onnxInputFileName + fileNameSuffix);
+
+                var onnxOutputFilePath = outputFilePathPrefix + ".onnx";
                 using (var outputFile = File.Create(onnxOutputFilePath))
                 {
                     model.WriteTo(outputFile);
                 }
 
-                var jsonOnnxOutputFilePath = Path.GetFileNameWithoutExtension(onnxFileName) + fileNameSuffix + ".json";
+                var jsonOnnxOutputFilePath = outputFilePathPrefix + ".json";
                 using (var output = new StreamWriter(jsonOnnxOutputFilePath))
                 {
                     var fmt = new JsonFormatter(JsonFormatter.Settings.Default);
