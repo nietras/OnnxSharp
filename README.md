@@ -16,18 +16,17 @@ Pretty much just:
 # Example Code
 ```csharp
 using System.IO;
-using System.Linq;
 using Google.Protobuf;
 
 // Examples see https://github.com/onnx/models
-var onnxInputFilePath = @"mnist-8.onnx";
+var onnxFilePath = @"mnist-8.onnx";
 
-using var file = File.OpenRead(onnxInputFilePath);
+using var fileStream = File.OpenRead(onnxFilePath);
 
-var model = Onnx.ModelProto.Parser.ParseFrom(file);
+var model = Onnx.ModelProto.Parser.ParseFrom(fileStream);
 
 var graph = model.Graph;
 var inputs = graph.Input;
-var values = graph.ValueInfo;
+var valueInfos = graph.ValueInfo;
 var outputs = graph.Output;
 ```
