@@ -20,7 +20,11 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
-
+  
+  <ItemGroup>
+    <None Include="packageIcon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.14.0" />
     <!--<PackageReference Include="Google.Protobuf.Tools" Version="3.14.0" />-->
