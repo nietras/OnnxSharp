@@ -8,9 +8,23 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description></Description>
-  </PropertyGroup>
+    
+    <Description>ONNX format parsing and manipulation in C#.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
+    <PackageIcon>packageIcon.png</PackageIcon>
+    <PackageIconFullPath>$(MSBuildThisFileDirectory)packageIcon.png</PackageIconFullPath>
+    <PackageTags>onnx</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nietras/OnnxSharp</PackageProjectUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="packageIcon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.14.0" />
     <!--<PackageReference Include="Google.Protobuf.Tools" Version="3.14.0" />-->
