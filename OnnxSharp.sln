@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxSharp", "src\OnnxSharp\OnnxSharp.csproj", "{226093F1-29E7-477D-B7D6-9662B94A41D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnnxSharpConsole", "src\OnnxSharpConsole\OnnxSharpConsole.csproj", "{1EC63E50-3866-4148-BCC1-54561A564D38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnnxSharpConsole", "src\OnnxSharpConsole\OnnxSharpConsole.csproj", "{1EC63E50-3866-4148-BCC1-54561A564D38}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{604A7FA2-17D1-4B9E-B1D3-15F186389B0B}"
 	ProjectSection(SolutionItems) = preProject
@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{604A7FA2-1
 		LICENSE = LICENSE
 		nuget.config = nuget.config
 		pack.ps1 = pack.ps1
+		README.md = README.md
 		rename.ps1 = rename.ps1
 		restore.ps1 = restore.ps1
 		test.ps1 = test.ps1

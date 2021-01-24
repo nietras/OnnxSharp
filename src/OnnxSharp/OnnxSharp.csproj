@@ -8,7 +8,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    
     <Description>ONNX format parsing and manipulation in C#.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    
+    <PackageTags>onnx</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nietras/OnnxSharp</PackageProjectUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
 
   <ItemGroup>
