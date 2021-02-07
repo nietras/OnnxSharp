@@ -25,6 +25,10 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="packageIcon.png" Pack="true" PackagePath="" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OnnxSharp\OnnxSharp.csproj" />
