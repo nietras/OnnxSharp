@@ -6,6 +6,12 @@ using Google.Protobuf;
 using McMaster.Extensions.CommandLineUtils;
 using Onnx;
 
+// https://github.com/natemcmaster/CommandLineUtils
+// https://natemcmaster.github.io/CommandLineUtils/docs/advanced/dependency-injection.html
+// TODO: Change to builder API
+// TODO: Clean up
+// TODO: Handle multiple command names etc.
+
 // https://github.com/jonstodle/DotNetSdkHelpers/blob/master/src/DotNetSdkHelpers/Program.cs
 [Command("dotnet-onnx", Description = "Inspect and manipulate ONNX files"),
  Subcommand(typeof(RemoveInitializersFromInputs)),
@@ -25,13 +31,6 @@ class Program
 
         return app.ExecuteAsync(args);
     }
-
-    //public Task<int> OnExecuteAsync(CommandLineApplication app)
-    //{
-    //    //var output = CaptureOutput("dotnet", "--version");
-    //    //Console.WriteLine(output?.Trim() ?? "Unable to fetch current SDK version");
-    //    return Task.FromResult(0);
-    //}
 }
 
 public abstract class Command
