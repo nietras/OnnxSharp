@@ -8,7 +8,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    
+    <RootNamespace>Onnx</RootNamespace>
+
     <Description>ONNX format parsing and manipulation in C#.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
