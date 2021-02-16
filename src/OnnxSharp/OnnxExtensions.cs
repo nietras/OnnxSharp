@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Onnx
 {
+    /// <summary>
+    /// Extensions to ONNX protobuf functionality.
+    /// </summary>
     public static partial class OnnxExtensions
     {
         /// <summary>

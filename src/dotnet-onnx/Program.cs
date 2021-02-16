@@ -14,7 +14,7 @@ using Onnx;
 
 // https://github.com/jonstodle/DotNetSdkHelpers/blob/master/src/DotNetSdkHelpers/Program.cs
 [Command("dotnet-onnx", Description = "Inspect and manipulate ONNX files"),
- Subcommand(typeof(RemoveInitializersFromInputs)),
+ Subcommand(typeof(Clean)),
  //Subcommand(typeof(List)),
  //Subcommand(typeof(Download))
     ]
@@ -54,8 +54,8 @@ public abstract class Command
     public abstract Task Run();
 }
 
-[Command("removeinitializersfrominputs", Description = "Remove initializers from inputs in graph")]
-public class RemoveInitializersFromInputs : Command
+[Command("clean", Description = "Clean graph for inference e.g. remove initializers from inputs")]
+public class Clean : Command
 {
     [Argument(0, "input", Description = "Input file path")]
     [Required]
