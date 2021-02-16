@@ -1,17 +1,21 @@
-<Project>
+﻿<Project>
   <!-- Custom properties need to be included before the Sdk.props 
        The Directory.Build.props way of doing this would have to be replicated in multiple places,
        so instead using the old props customization trick but define it before Sdk.props. -->
-  <Import Project="../Project.Output.Library.props" />
-  
+  <Import Project="../Project.Output.Executable.props" />
+
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Onnx</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>dotnet_onnx</RootNamespace>
 
-    <Description>ONNX format parsing and manipulation in C#.</Description>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackAsTool>true</PackAsTool>
+    <PackageId>dotnet-onnx</PackageId>
+    <ToolCommandName>dotnet-onnx</ToolCommandName>
+    
+    <Description>Inspect and manipulate ONNX files</Description>
 
     <PackageIcon>packageIcon.png</PackageIcon>
     <PackageIconFullPath>$(MSBuildThisFileDirectory)packageIcon.png</PackageIconFullPath>
@@ -25,10 +29,13 @@
   <ItemGroup>
     <None Include="packageIcon.png" Pack="true" PackagePath="" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.14.0" />
-    <!--<PackageReference Include="Google.Protobuf.Tools" Version="3.14.0" />-->
+    <ProjectReference Include="..\OnnxSharp\OnnxSharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.1.0" />
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
