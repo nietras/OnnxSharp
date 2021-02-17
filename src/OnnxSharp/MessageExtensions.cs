@@ -5,16 +5,10 @@ namespace Onnx
 {
     public static partial class MessageExtensions
     {
-        //
-        // Summary:
-        //     Writes the given message data to the given stream in protobuf encoding.
-        //
-        // Parameters:
-        //   message:
-        //     The message to write to the stream.
-        //
-        //   output:
-        //     The stream to write to.
+        /// <summary>
+        /// Writes the given <paramref name="message"/> data to the 
+        /// given <paramref name="filePath"/> in protobuf encoding.
+        /// </summary>
         public static void WriteToFile(this IMessage message, string filePath)
         {
             using var stream = File.OpenWrite(filePath);
