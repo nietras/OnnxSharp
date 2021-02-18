@@ -14,5 +14,15 @@ namespace Onnx
             using var stream = File.OpenWrite(filePath);
             message.WriteTo(stream);
         }
+
+        /// <summary>
+        /// Writes the given <paramref name="message"/> data to the 
+        /// given <paramref name="filePath"/> in JSON encoding.
+        /// </summary>
+        public static void WriteJsonToFile(this IMessage message, string filePath)
+        {
+            using var writer = new StreamWriter(filePath);
+            JsonFormatter.Default.Format(message, writer);
+        }
     }
 }
