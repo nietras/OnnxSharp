@@ -44,14 +44,14 @@ namespace OnnxSharp.Test
             // Arrange
             var model = ModelProto.Parser.ParseFrom(m_createStream);
 
-            model.WriteJsonToFile("mnist-8.json");
+            //model.WriteJsonToFile("mnist-8.json");
 
             // Act
             model.RemoveUnnecessaryInitializerReshapes();
 
-            model.WriteJsonToFile("mnist-8-after.json");
+            //model.WriteJsonToFile("mnist-8-after.json");
 
-            model.WriteToFile("mnist-8-after.onnx");
+            //model.WriteToFile("mnist-8-after.onnx");
 
             // Assert
             var graph = model.Graph;

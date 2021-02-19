@@ -17,8 +17,8 @@ Action<string> log = t => { Console.WriteLine(t); Trace.WriteLine(t); };
 //modelHACK.WriteToFile(onnxOutputFilePathHACK);
 
 // Examples see https://github.com/onnx/models
-var onnxInputFilePath = @"mnist-8.onnx";
-//var onnxInputFilePath = @"C:\git\eis\ei4-analysis-models\build\OnnxRuntimeProfiler_AnyCPU_Debug\TR-CntkModel-SV-7.18.0.onnx";
+//var onnxInputFilePath = @"mnist-8.onnx";
+var onnxInputFilePath = @"C:\git\eis\ei4-analysis-models\build\OnnxRuntimeProfiler_AnyCPU_Debug\TR-CntkModel-SV-7.18.0.onnx";
 
 var onnxInputFileName = Path.GetFileNameWithoutExtension(onnxInputFilePath);
 var outputDirectory = Path.GetDirectoryName(onnxInputFilePath);
@@ -30,12 +30,12 @@ log($"Parsed file '{onnxInputFilePath}' of size {model.CalculateSize()}");
 var unmodifiedjsonOnnxOutputFilePath = Path.Combine(outputDirectory, onnxInputFileName) + ".json";
 model.WriteJsonToFile(unmodifiedjsonOnnxOutputFilePath);
 
-//model.RemoveInitializersFromInputs();
+model.RemoveInitializersFromInputs();
 model.RemoveUnnecessaryInitializerReshapes();
 
 var graph = model.Graph;
 
-//Brainstorm.SetDim(graph);
+Brainstorm.SetDim(graph);
 
 
 var fileNameSuffix = "-dynamic-leading-dimension";
