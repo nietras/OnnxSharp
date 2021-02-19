@@ -35,7 +35,9 @@ namespace Onnx
             {
                 if (nameToInput.TryGetValue(initializer.Name, out var input))
                 {
-                    inputs.Remove(input);
+                    // https://github.com/protocolbuffers/protobuf/blob/master/csharp/src/Google.Protobuf/Collections/RepeatedField.cs
+                    var removed = inputs.Remove(input);
+                    Trace.WriteLine($"{removed} {inputs.Count}");
                 }
             }
 

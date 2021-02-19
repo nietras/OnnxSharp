@@ -11,7 +11,7 @@ namespace Onnx
         /// </summary>
         public static void WriteToFile(this IMessage message, string filePath)
         {
-            using var stream = File.OpenWrite(filePath);
+            using var stream = File.Open(filePath, FileMode.Create);
             message.WriteTo(stream);
         }
 

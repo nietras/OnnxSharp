@@ -19,7 +19,7 @@ namespace Onnx
         public static T ParseFromFile<T>(this MessageParser<T> parser, string filePath)
             where T : IMessage<T>
         {
-            using var stream = File.OpenRead(filePath);
+            using var stream = File.Open(filePath, FileMode.Open);
             return parser.ParseFrom(stream);
         }
 
