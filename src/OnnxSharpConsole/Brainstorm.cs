@@ -21,6 +21,8 @@ namespace OnnxSharpConsole
             var allValues = inputs.Concat(values).Concat(outputs).ToArray();
 
             //var namesToIgnore = new HashSet<string>();
+            // Only fix reshapes that have data input with dynamic shape after
+
             var reshapes = nodes.Where(n => n.OpType == "Reshape").ToArray();
             foreach (var reshape in reshapes)
             {
@@ -28,6 +30,7 @@ namespace OnnxSharpConsole
                 // Second hence is the shape
                 var shapeInputName = reshape.Input[1];
                 var shape = initializers.Single(v => v.Name == shapeInputName);
+
                 Debug.Assert(shape.DataType == (int)TensorProto.Types.DataType.Int64);
                 var dims = shape.Dims;
                 if (dims.Count > 0 && dims[0] > 0)

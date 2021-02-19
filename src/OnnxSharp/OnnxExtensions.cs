@@ -127,14 +127,6 @@ namespace Onnx
 
                                 }
                             }
-                            //outputShape.Di
-
-                            // Get reshape shape as "Dims" comparable to data
-                            //var shapeDims = GetShape(shapeInitializer);
-
-                            // Find nodes that use the outputName in inputs (and replace in that)
-
-                            // 
                         }
                     }
                 }
