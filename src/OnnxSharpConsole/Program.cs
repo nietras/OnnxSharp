@@ -26,6 +26,7 @@ var model = ModelProto.Parser.ParseFromFile(onnxInputFilePath);
 log($"Parsed file '{onnxInputFilePath}' of size {model.CalculateSize()}");
 
 model.RemoveInitializersFromInputs();
+model.RemoveUnnecessaryInitializerReshapes();
 
 var graph = model.Graph;
 // Shapes are defined in inputs, values and outputs
@@ -37,7 +38,7 @@ var outputs = graph.Output;
 
 var allValues = inputs.Concat(values).Concat(outputs).ToArray();
 
-var namesToIgnore = new HashSet<string>();
+//var namesToIgnore = new HashSet<string>();
 var reshapes = nodes.Where(n => n.OpType == "Reshape").ToArray();
 foreach (var reshape in reshapes)
 {
@@ -50,15 +51,25 @@ foreach (var reshape in reshapes)
     if (dims.Count > 0 && dims[0] > 0)
     {
         // Data may be stored as Int64 or Raw (fixed-width, little-endian)
-        var int64Data = shape.Int64Data;
-        var rawData = shape.RawData;
-        var rawAsInt64Data = MemoryMarshal.Cast<byte, long>(rawData.Span);
-        Debug.Assert(rawAsInt64Data.Length == dims[0]);
-        if (rawAsInt64Data[0] == 1) // Dimension we replace
+        if (shape.Int64Data.Count > 0)
         {
-            var newShape = rawAsInt64Data.ToArray();
-            newShape[0] = -1;
-            shape.RawData = ByteString.CopyFrom(MemoryMarshal.Cast<long, byte>(newShape.AsSpan()));
+            var int64Data = shape.Int64Data;
+            if (int64Data[0] == 1) // Dimension we replace
+            {
+                int64Data[0] = -1;
+            }
+        }
+        if (!shape.RawData.IsEmpty)
+        {
+            var rawData = shape.RawData;
+            var rawAsInt64Data = MemoryMarshal.Cast<byte, long>(rawData.Span);
+            Debug.Assert(rawAsInt64Data.Length == dims[0]);
+            if (rawAsInt64Data[0] == 1) // Dimension we replace
+            {
+                var newShape = rawAsInt64Data.ToArray();
+                newShape[0] = -1;
+                shape.RawData = ByteString.CopyFrom(MemoryMarshal.Cast<long, byte>(newShape.AsSpan()));
+            }
         }
         else
         {
@@ -76,7 +87,7 @@ foreach (var reshape in reshapes)
 foreach (var value in allValues)
 {
     //var denotation = value.Type.Denotation;
-    if (!namesToIgnore.Contains(value.Name))
+    //if (!namesToIgnore.Contains(value.Name))
     {
         var shape = value.Type.TensorType.Shape;
         var dims = shape.Dim;
@@ -85,12 +96,12 @@ foreach (var value in allValues)
         //dim.DimValue = -1; // Or don't set it
         dim.DimParam = "N";
     }
-    else
-    {
-        // FAILS IF WE DO NOT CHANGE OUTPUT OF THE ONE RESHAPE
-        // Reshape
-        log(value.ToString());
-    }
+    //else
+    //{
+    //    // FAILS IF WE DO NOT CHANGE OUTPUT OF THE ONE RESHAPE
+    //    // Reshape
+    //    log(value.ToString());
+    //}
 }
 
 //foreach (var node in nodes)
