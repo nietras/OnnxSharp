@@ -9,6 +9,12 @@ using Onnx;
 
 Action<string> log = t => { Console.WriteLine(t); Trace.WriteLine(t); };
 
+// Manually hacked model to remove reshape of fixed weights
+//var onnxJsonInputFilePathHACK = @"C:\git\eis\ei4-analysis-models\build\OnnxRuntimeProfiler_AnyCPU_Debug\TR-CntkModel-SV-7.18.0-dynamic-leading-dimension-MANUALHACK.json";
+//var modelHACK = ModelProto.Parser.ParseJson(File.ReadAllText(onnxJsonInputFilePathHACK));
+//var onnxOutputFilePathHACK = @"C:\git\eis\ei4-analysis-models\build\OnnxRuntimeProfiler_AnyCPU_Debug\TR-CntkModel-SV-7.18.0-MANUALHACK.onnx";
+//modelHACK.WriteToFile(onnxOutputFilePathHACK);
+
 // Examples see https://github.com/onnx/models
 //var onnxInputFilePath = @"mnist-8.onnx";
 var onnxInputFilePath = @"C:\git\eis\ei4-analysis-models\build\OnnxRuntimeProfiler_AnyCPU_Debug\TR-CntkModel-SV-7.18.0.onnx";

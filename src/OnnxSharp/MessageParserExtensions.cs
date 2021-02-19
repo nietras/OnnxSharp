@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf;
+using System;
 using System.IO;
 
 namespace Onnx
@@ -19,6 +20,17 @@ namespace Onnx
             where T : IMessage<T>
         {
             using var stream = File.OpenRead(filePath);
+            return parser.ParseFrom(stream);
+        }
+
+        /// <summary>
+        /// Parse <typeparamref name="T"/> from file via <paramref name="createStream"/>
+        /// and disposes the created stream after parsing is done.
+        /// </summary>
+        public static T ParseFrom<T>(this MessageParser<T> parser, Func<Stream> createStream)
+            where T : IMessage<T>
+        {
+            using var stream = createStream();
             return parser.ParseFrom(stream);
         }
     }
