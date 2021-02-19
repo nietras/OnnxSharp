@@ -51,6 +51,8 @@ namespace OnnxSharp.Test
 
             model.WriteJsonToFile("mnist-8-after.json");
 
+            model.WriteToFile("mnist-8-after.onnx");
+
             // Assert
             var graph = model.Graph;
             //Assert.AreEqual(1, graph.Input.Count);

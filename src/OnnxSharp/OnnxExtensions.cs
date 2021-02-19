@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf.Collections;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -74,14 +75,14 @@ namespace Onnx
                     {
                         var dataName = inputs[0];
                         var shapeName = inputs[1];
-                        var outputName = outputs[0]; // To use to rename input to next node
+                        var reshapeOutputName = outputs[0]; // To use to rename input to next node
 
                         if (nameToInitializer.TryGetValue(dataName, out var dataInitializer) &&
                             nameToInitializer.TryGetValue(shapeName, out var shapeInitializer))
                         {
                             // TODO: Check initializer not used in other nodes
 
-                            var outputShapeValue = graph.ValueInfo.Where(v => v.Name.Equals(outputName)).Single();
+                            var outputShapeValue = graph.ValueInfo.Where(v => v.Name.Equals(reshapeOutputName)).Single();
 
                             var outputShapeDims = outputShapeValue.Type.TensorType.Shape.Dim;
                             var allValue = outputShapeDims.All(d => d.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue);
@@ -99,23 +100,26 @@ namespace Onnx
 
                                     if (outputShapeProductSum == dataShapeProductSum)
                                     {
-                                        var dataInitializerIndex = graph.Initializer.IndexOf(dataInitializer);
-                                        var newDataInitializer = new TensorProto(dataInitializer, outputShape);
-                                        graph.Initializer.RemoveAt(dataInitializerIndex);
-                                        graph.Initializer.Insert(dataInitializerIndex, newDataInitializer);
-                                        //dataInitializer.D = outputShapeDims;
-                                        // Use outputShape as the new shape
+                                        dataInitializer.Dims.Clear();
+                                        dataInitializer.Dims.AddRange(outputShape);
 
-                                        // Remove reshape data e.g. shape
+                                        // Remove reshape data shape both as initializer and input
                                         TryRemove(graph.Initializer, i => i.Name == shapeName);
+                                        TryRemove(graph.Input, i => i.Name == shapeName);
 
                                         nodesToRemove.Add(node);
 
                                         // Replace reshape output name with data name directly in all nodes
                                         for (int updateNodeIndex = 0; updateNodeIndex < nodes.Count; updateNodeIndex++)
                                         {
-                                            var updateNodeInputs = node.Input;
-                                            //inputs.
+                                            var updateNodeInputs = nodes[updateNodeIndex].Input;
+                                            for (int inputIndex = 0; inputIndex < updateNodeInputs.Count; inputIndex++)
+                                            {
+                                                if (updateNodeInputs[inputIndex] == reshapeOutputName)
+                                                {
+                                                    updateNodeInputs[inputIndex] = dataName;
+                                                }
+                                            }
                                         }
                                     }
 
