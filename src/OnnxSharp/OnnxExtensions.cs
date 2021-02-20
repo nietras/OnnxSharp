@@ -12,21 +12,11 @@ namespace Onnx
     /// </summary>
     public static partial class OnnxExtensions
     {
-        // TODO: Having these overloads makes things less scalable and cumbersome, remove?
-        /// <summary>
-        /// Remove initializers from inputs of graph in model.
-        /// </summary>
-        public static ModelProto RemoveInitializersFromInputs(this ModelProto model)
-        {
-            RemoveInitializersFromInputs(model.Graph);
-            return model;
-        }
-
         /// <summary>
         /// Remove initializers from inputs of graph.
         /// </summary>
         // https://github.com/microsoft/onnxruntime/blob/master/tools/python/remove_initializer_from_input.py
-        public static GraphProto RemoveInitializersFromInputs(GraphProto graph)
+        public static void RemoveInitializersFromInputs(this GraphProto graph)
         {
             var inputs = graph.Input;
             var nameToInput = inputs.ToDictionary(i => i.Name, i => i);
@@ -40,25 +30,13 @@ namespace Onnx
                     Trace.WriteLine($"{removed} {inputs.Count}");
                 }
             }
-
-            return graph;
-        }
-
-        // TODO: Having these overloads makes things less scalable and cumbersome, remove?
-        /// <summary>
-        /// Remove unnecessary initializer reshapes from graph.
-        /// </summary>
-        public static ModelProto RemoveUnnecessaryInitializerReshapes(this ModelProto model)
-        {
-            RemoveUnnecessaryInitializerReshapes(model.Graph);
-            return model;
         }
 
         /// <summary>
         /// Remove unnecessary initializer reshapes from graph.
         /// </summary>
         // https://github.com/microsoft/onnxruntime/blob/master/tools/python/remove_initializer_from_input.py
-        public static GraphProto RemoveUnnecessaryInitializerReshapes(GraphProto graph)
+        public static void RemoveUnnecessaryInitializerReshapes(this GraphProto graph)
         {
             var nameToInitializer = graph.Initializer.ToDictionary(i => i.Name, i => i);
 
@@ -106,8 +84,8 @@ namespace Onnx
                                         dataInitializer.Dims.AddRange(outputShape);
 
                                         // Remove reshape data shape both as initializer and input
-                                        TryRemove(graph.Initializer, i => i.Name == shapeName);
-                                        TryRemove(graph.Input, i => i.Name == shapeName);
+                                        TryRemove(graph.Initializer, i => i.Name, shapeName);
+                                        TryRemove(graph.Input, i => i.Name, shapeName);
 
                                         nodesToRemove.Add(node);
 
@@ -135,17 +113,15 @@ namespace Onnx
             {
                 nodes.Remove(node);
             }
-
-            return graph;
         }
 
-        // TODO: Make non-allocating version
-        static bool TryRemove<T>(RepeatedField<T> fields, Predicate<T> predicate)
+        static bool TryRemove<T, TSelect>(RepeatedField<T> fields, Func<T, TSelect> select, Predicate<TSelect> predicate)
         {
             for (int i = 0; i < fields.Count; i++)
             {
                 var field = fields[i];
-                if (predicate(field))
+                var value = select(field);
+                if (predicate(value))
                 {
                     fields.RemoveAt(i);
                     return true;
@@ -154,9 +130,20 @@ namespace Onnx
             return false;
         }
 
-        static long[] GetData1D(TensorProto tensor)
+        static bool TryRemove<T, TSelect>(RepeatedField<T> fields, Func<T, TSelect> select, TSelect valueToRemove)
+            where TSelect : IEquatable<TSelect>
         {
-            return null;
+            for (int i = 0; i < fields.Count; i++)
+            {
+                var field = fields[i];
+                var value = select(field);
+                if (value.Equals(valueToRemove))
+                {
+                    fields.RemoveAt(i);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -30,10 +30,9 @@ log($"Parsed file '{onnxInputFilePath}' of size {model.CalculateSize()}");
 var unmodifiedjsonOnnxOutputFilePath = Path.Combine(outputDirectory, onnxInputFileName) + ".json";
 model.WriteJsonToFile(unmodifiedjsonOnnxOutputFilePath);
 
-model.RemoveInitializersFromInputs();
-model.RemoveUnnecessaryInitializerReshapes();
-
 var graph = model.Graph;
+graph.RemoveInitializersFromInputs();
+graph.RemoveUnnecessaryInitializerReshapes();
 
 Brainstorm.SetDim(graph);
 

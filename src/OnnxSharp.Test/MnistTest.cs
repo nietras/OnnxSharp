@@ -30,7 +30,7 @@ namespace OnnxSharp.Test
             var model = ModelProto.Parser.ParseFrom(m_createStream);
 
             // Act
-            model.RemoveInitializersFromInputs();
+            model.Graph.RemoveInitializersFromInputs();
 
             // Assert
             var graph = model.Graph;
@@ -47,7 +47,7 @@ namespace OnnxSharp.Test
             //model.WriteJsonToFile("mnist-8.json");
 
             // Act
-            model.RemoveUnnecessaryInitializerReshapes();
+            model.Graph.RemoveUnnecessaryInitializerReshapes();
 
             //model.WriteJsonToFile("mnist-8-after.json");
 

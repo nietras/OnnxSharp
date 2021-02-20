@@ -67,17 +67,11 @@ public class Clean : Command
 
     public override Task Run()
     {
-        using (var inputFile = File.OpenRead(Input))
-        {
-            var model = ModelProto.Parser.ParseFrom(inputFile);
+        var model = ModelProto.Parser.ParseFromFile(Input);
 
-            model.RemoveInitializersFromInputs();
+        model.Graph.RemoveInitializersFromInputs();
 
-            using (var outputFile = File.Create(Output))
-            {
-                model.WriteTo(outputFile);
-            }
-        }
+        model.WriteToFile(Output);
 
         return Task.CompletedTask;
     }
