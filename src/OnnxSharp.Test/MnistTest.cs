@@ -58,5 +58,26 @@ namespace OnnxSharp.Test
             //Assert.AreEqual(1, graph.Input.Count);
             //Assert.AreEqual(1, graph.Output.Count);
         }
+
+        [TestMethod]
+        public void SetDim()
+        {
+            // Arrange
+            var model = ModelProto.Parser.ParseFrom(m_createStream);
+
+            //model.WriteToFile("mnist-8.onnx");
+
+            // Act
+            model.Graph.SetDim();
+
+            //model.WriteJsonToFile("mnist-8-after.json");
+
+            //model.WriteToFile("mnist-8-setdim.onnx");
+
+            // Assert
+            var graph = model.Graph;
+            //Assert.AreEqual(1, graph.Input.Count);
+            //Assert.AreEqual(1, graph.Output.Count);
+        }
     }
 }

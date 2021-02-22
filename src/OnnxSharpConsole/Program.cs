@@ -34,7 +34,7 @@ var graph = model.Graph;
 graph.RemoveInitializersFromInputs();
 graph.RemoveUnnecessaryInitializerReshapes();
 
-Brainstorm.SetDim(graph);
+graph.SetDim();
 
 log($"Changed model to size {model.CalculateSize()}");
 

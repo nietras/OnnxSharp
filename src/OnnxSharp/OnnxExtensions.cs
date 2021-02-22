@@ -1,9 +1,10 @@
-﻿using Google.Protobuf.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
+using Google.Protobuf;
+using Google.Protobuf.Collections;
 
 namespace Onnx
 {
@@ -48,13 +49,14 @@ namespace Onnx
             {
                 var node = nodes[nodeIndex];
 
-                if (node.OpType == "Reshape")
+                var opSpec = Ops.Reshape.Spec;
+                if (node.OpType == opSpec.OpType)
                 {
                     var inputs = node.Input;
                     var outputs = node.Output;
 
                     // Expected Reshape takes 2 inputs and has 1 output
-                    if (inputs.Count == 2 && outputs.Count == 1) 
+                    if (inputs.Count == opSpec.Inputs && outputs.Count == opSpec.Outputs) 
                     {
                         var dataName = inputs[0];
                         var shapeName = inputs[1];
@@ -86,6 +88,7 @@ namespace Onnx
 
                                     if (outputShapeProductSum == dataShapeProductSum)
                                     {
+                                        // Change data shape to the reshape output shape directly
                                         dataInitializer.Dims.Clear();
                                         dataInitializer.Dims.AddRange(outputShape);
 
@@ -96,17 +99,7 @@ namespace Onnx
                                         nodesToRemove.Add(node);
 
                                         // Replace reshape output name with data name directly in all nodes
-                                        for (int updateNodeIndex = 0; updateNodeIndex < nodes.Count; updateNodeIndex++)
-                                        {
-                                            var updateNodeInputs = nodes[updateNodeIndex].Input;
-                                            for (int inputIndex = 0; inputIndex < updateNodeInputs.Count; inputIndex++)
-                                            {
-                                                if (updateNodeInputs[inputIndex] == reshapeOutputName)
-                                                {
-                                                    updateNodeInputs[inputIndex] = dataName;
-                                                }
-                                            }
-                                        }
+                                        ReplaceInput(nodes, reshapeOutputName, dataName);
                                     }
                                 }
                             }
@@ -117,6 +110,126 @@ namespace Onnx
             foreach (var node in nodesToRemove)
             {
                 nodes.Remove(node);
+            }
+        }
+
+        internal static void ReplaceInput(RepeatedField<NodeProto> nodes, string oldValue, string newValue)
+        {
+            for (int nodeIndex = 0; nodeIndex < nodes.Count; nodeIndex++)
+            {
+                var updateNodeInputs = nodes[nodeIndex].Input;
+                for (int inputIndex = 0; inputIndex < updateNodeInputs.Count; inputIndex++)
+                {
+                    if (updateNodeInputs[inputIndex] == oldValue)
+                    {
+                        updateNodeInputs[inputIndex] = newValue;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set dimension of inputs, value infos, outputs and potential Reshape ops.
+        /// Can be used to make models have dynamic batch size or different static batch sizes.
+        /// </summary>
+        // TODO: Cleanup signature, consider default params or use overloads
+        //       DimParamOrValue oldDim + DimParamOrValue newDim
+        public static void SetDim(this GraphProto graph, int dimIndex = 0, string dimParam = "N")
+        {
+            // Reshape ops have new shape defined as input to the reshape op.
+            // This input needs to be changed to reflect new dim e.g. be set -1 if dynamic
+            SetDimInReshapes(graph, dimIndex);
+
+            // Should we set this based on nodes instead? Handling input, outputs based on that?
+
+            // Shapes are defined in inputs, valueInfos and outputs
+            SetDim(graph.Input, dimIndex, dimParam);
+            SetDim(graph.ValueInfo, dimIndex, dimParam);
+            SetDim(graph.Output, dimIndex, dimParam);
+        }
+
+        static void SetDimInReshapes(GraphProto graph, int dimIndex)
+        {
+            var nodes = graph.Node;
+            var initializers = graph.Initializer;
+
+            // TODO: Only fix reshapes that have data input and with dynamic shape after
+
+            var opSpec = Ops.Reshape.Spec;
+            foreach (var node in nodes)
+            {
+                if (node.OpType == opSpec.OpType)
+                {
+                    var dataInputName = node.Input[Ops.Reshape.InputDataIndex];
+
+                    // Check if data input is an initializer if so we should not change the reshape
+                    // and hence skip this reshape node
+                    var dataInitializerIndex = initializers.IndexOf(t => t.Name, dataInputName);
+                    if (dataInitializerIndex >= 0)
+                    { continue; }
+
+                    var shapeInputName = node.Input[Ops.Reshape.InputShapeIndex];
+
+                    var shape = initializers.Single(tensor => tensor.Name, shapeInputName);
+
+                    SetDimInReshapeTensorShape(dimIndex, shape);
+                }
+            }
+        }
+
+        static void SetDimInReshapeTensorShape(int dimIndex, TensorProto shape)
+        {
+            Debug.Assert(shape.DataType == (int)TensorProto.Types.DataType.Int64);
+            var dims = shape.Dims;
+            if (dims.Count > 0 && dims[dimIndex] > 0)
+            {
+                // Data may be stored as Int64 or Raw (fixed-width, little-endian)
+                if (shape.Int64Data.Count > 0)
+                {
+                    var int64Data = shape.Int64Data;
+                    if (int64Data[dimIndex] == 1) // Dimension we replace
+                    {
+                        int64Data[dimIndex] = Ops.Reshape.DynamicReshapeValue;
+                    }
+                }
+                if (!shape.RawData.IsEmpty)
+                {
+                    var rawData = shape.RawData;
+                    var rawAsInt64Data = MemoryMarshal.Cast<byte, long>(rawData.Span);
+                    Debug.Assert(rawAsInt64Data.Length == dims[dimIndex]);
+                    if (rawAsInt64Data[dimIndex] == 1) // Dimension we replace
+                    {
+                        var newShape = rawAsInt64Data.ToArray();
+                        newShape[dimIndex] = Ops.Reshape.DynamicReshapeValue;
+                        shape.RawData = ByteString.CopyFrom(MemoryMarshal.Cast<long, byte>(newShape.AsSpan()));
+                    }
+                }
+            }
+        }
+
+        internal static void SetDim(RepeatedField<ValueInfoProto> valueInfos, int dimIndex, string dimParam)
+        {
+            for (int i = 0; i < valueInfos.Count; i++)
+            {
+                var valueInfo = valueInfos[i];
+                SetDim(valueInfo, dimIndex, dimParam);
+            }
+        }
+
+        internal static void SetDim(ValueInfoProto valueInfo, int dimIndex, string dimParam)
+        {
+            var shape = valueInfo.Type.TensorType.Shape;
+            var dims = shape.Dim;
+            var dim = dims[dimIndex];
+            if (dim.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue)
+            {
+                // TODO: Handle this better 
+                if (dim.DimValue == 1)
+                {
+                    dim.ClearValue();
+                    dim.DimParam = dimParam;
+                    Trace.WriteLine(valueInfo.Name);
+                }
             }
         }
     }
