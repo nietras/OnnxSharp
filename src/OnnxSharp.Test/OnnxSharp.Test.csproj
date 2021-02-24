@@ -25,6 +25,10 @@
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(TargetFramework) == 'net461'">
+    <PackageReference Include="System.Text.Json" Version="5.0" />
+  </ItemGroup>
+
   <!-- Change logical name of all embedded resources to be like file system paths. -->
   <Target Name="ModifyEmbeddedResourceNames" BeforeTargets="CreateManifestResourceNames">
     <ItemGroup>

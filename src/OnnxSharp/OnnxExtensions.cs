@@ -136,14 +136,23 @@ namespace Onnx
         //       DimParamOrValue oldDim + DimParamOrValue newDim
         public static void SetDim(this GraphProto graph, int dimIndex = 0, string dimParam = "N")
         {
-            // Reshape ops have new shape defined as input to the reshape op.
-            // This input needs to be changed to reflect new dim e.g. be set -1 if dynamic
+            // Reshape ops have their "new shape" defined as input to the reshape op.
+            // This input needs to be changed to reflect new dim e.g. be set -1 if dynamic.
             SetDimInReshapes(graph, dimIndex);
 
             // Should we set this based on nodes instead? Handling input, outputs based on that?
 
             // Shapes are defined in inputs, valueInfos and outputs
-            SetDim(graph.Input, dimIndex, dimParam);
+            //
+            // Only real inputs should be changed, not "initializer" inputs
+            var initializserNames = new HashSet<string>(graph.Initializer.Select(i => i.Name));
+            var inferenceInputs = graph.Input.Where(i => !initializserNames.Contains(i.Name));
+            foreach (var input in inferenceInputs)
+            {
+                SetDim(input, dimIndex, dimParam);
+            }
+            //SetDim(graph.Input, dimIndex, dimParam);
+
             SetDim(graph.ValueInfo, dimIndex, dimParam);
             SetDim(graph.Output, dimIndex, dimParam);
         }

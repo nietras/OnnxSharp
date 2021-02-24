@@ -1,7 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Onnx;
-using System;
+﻿using System;
 using System.IO;
+using System.Text.Json;
+using Google.Protobuf;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Onnx;
 
 namespace OnnxSharp.Test
 {
@@ -66,13 +68,13 @@ namespace OnnxSharp.Test
             var model = ModelProto.Parser.ParseFrom(m_createStream);
 
             //model.WriteToFile("mnist-8.onnx");
+            //model.WriteIndentedJsonToFile($"mnist-8-{nameof(SetDim)}-before.json");
 
             // Act
             model.Graph.SetDim();
 
-            //model.WriteJsonToFile("mnist-8-after.json");
-
-            //model.WriteToFile("mnist-8-setdim.onnx");
+            //model.WriteToFile($"mnist-8-{nameof(SetDim)}-after.onnx");
+            //model.WriteIndentedJsonToFile($"mnist-8-{nameof(SetDim)}-after.json");
 
             // Assert
             var graph = model.Graph;
