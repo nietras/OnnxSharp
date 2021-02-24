@@ -7,7 +7,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <TargetFrameworks>net461;net50</TargetFrameworks>
+    <TargetFrameworks>net461;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
