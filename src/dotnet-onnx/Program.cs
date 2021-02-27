@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 
@@ -13,7 +14,7 @@ using McMaster.Extensions.CommandLineUtils;
  Subcommand(typeof(CleanCommand)),
  //Subcommand(typeof(List)),
  //Subcommand(typeof(Download))
-    ]
+]
 class Program
 {
     static Task<int> Main(string[] args)
@@ -28,6 +29,12 @@ class Program
         var result = app.Execute(args);
 
         return Task.FromResult(result);
-        //return app.ExecuteAsync(args);
+    }
+
+    public Task<int> OnExecuteAsync(CommandLineApplication app)
+    {
+        app.ShowHelp();
+
+        return Task.FromResult<int>(0);
     }
 }
