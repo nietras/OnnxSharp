@@ -33,6 +33,9 @@ namespace Onnx
         public bool IsParam => IsParamValid(_param);
         public bool IsValue => !IsParam;
 
+        public override string ToString() => IsParam ? Param : Value.ToString();
+        public override int GetHashCode() => IsParam ? Param.GetHashCode() : Value.GetHashCode();
+
         void CheckIsParam()
         {
             if (IsValue) 

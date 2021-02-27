@@ -5,6 +5,13 @@ using Onnx;
 
 public abstract class InputOutputCommand : Command
 {
+    protected readonly IConsole _console;
+
+    public InputOutputCommand(IConsole console)
+    {
+        _console = console;
+    }
+
     [Argument(0, "input", Description = "Input file path")]
     [Required]
     public string Input { get; }
@@ -17,9 +24,13 @@ public abstract class InputOutputCommand : Command
     {
         var model = ModelProto.Parser.ParseFromFile(Input);
 
+        _console.WriteLine($"Parsed input file '{Input}' of size {model.CalculateSize()}");
+
         Run(model);
 
         model.WriteToFile(Output);
+
+        _console.WriteLine($"Wrote output file '{Output}' of size {model.CalculateSize()}");
 
         return Task.CompletedTask;
     }

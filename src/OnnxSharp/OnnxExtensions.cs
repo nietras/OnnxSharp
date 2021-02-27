@@ -14,6 +14,15 @@ namespace Onnx
     public static partial class OnnxExtensions
     {
         /// <summary>
+        /// Clean graph for inference.
+        /// </summary>
+        public static void Clean(this GraphProto graph)
+        {
+            graph.RemoveInitializersFromInputs();
+            graph.RemoveUnnecessaryInitializerReshapes();
+        }
+
+        /// <summary>
         /// Remove initializers from inputs of graph.
         /// </summary>
         // https://github.com/microsoft/onnxruntime/blob/master/tools/python/remove_initializer_from_input.py
