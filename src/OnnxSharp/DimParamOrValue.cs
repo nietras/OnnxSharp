@@ -30,8 +30,8 @@ namespace Onnx
         public string Param { get { CheckIsParam(); return _param; } }
         public int Value { get { CheckIsValue(); return _value; } }
 
-        public bool IsParam => !IsValue;
-        public bool IsValue => IsParamValid(_param);
+        public bool IsParam => IsParamValid(_param);
+        public bool IsValue => !IsParam;
 
         void CheckIsParam()
         {
@@ -49,6 +49,6 @@ namespace Onnx
             }
         }
 
-        static bool IsParamValid(string param) => string.IsNullOrWhiteSpace(param);
+        static bool IsParamValid(string param) => !string.IsNullOrWhiteSpace(param);
     }
 }

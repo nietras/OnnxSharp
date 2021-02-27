@@ -12,7 +12,7 @@ using McMaster.Extensions.CommandLineUtils;
 // https://github.com/jonstodle/DotNetSdkHelpers/blob/master/src/DotNetSdkHelpers/Program.cs
 [Command("dotnet-onnx", Description = "Inspect and manipulate ONNX files"),
  Subcommand(typeof(CleanCommand)),
- //Subcommand(typeof(List)),
+ Subcommand(typeof(SetDimCommand)),
  //Subcommand(typeof(Download))
 ]
 class Program
