@@ -26,7 +26,7 @@ public class InfoCommand : InputCommand
         for (int i = 0; i < valueInfos.Count; i++)
         {
             var valueInfo = valueInfos[i];
-            log($"Name: {valueInfo.Name} Size in file: {valueInfo.CalculateSize()} {valueInfo.Type}");
+            log($"Name: {valueInfo.Name} Size in file: {valueInfo.CalculateSize()} {valueInfo.Type} {valueInfo.Type.ValueCase}");
         }
     }
 
@@ -35,7 +35,8 @@ public class InfoCommand : InputCommand
         for (int i = 0; i < tensors.Count; i++)
         {
             var tensor = tensors[i];
-            log($"Name: {tensor.Name} Size in file: {tensor.CalculateSize()} {tensor.Dims} {tensor.DataType} {tensor.DataLocation} ");
+            var summary = tensor.Summary();
+            
         }
     }
 }
