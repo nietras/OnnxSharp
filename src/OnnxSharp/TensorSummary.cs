@@ -52,6 +52,17 @@ namespace Onnx
                 }
             }
 
+            Format(columnNames, columnAlignment, maxColumnWidth, table, builder);
+        }
+
+        internal static void Format(string[] columnNames, Alignment[] columnAlignment, int[] maxColumnWidth, 
+            string[,] table, StringBuilder builder)
+        {
+            // TODO: Define constants below
+            
+            var rows = table.GetLength(0);
+            var cols = table.GetLength(1);
+
             // Column Names
             for (int col = 0; col < cols; col++)
             {
@@ -62,14 +73,25 @@ namespace Onnx
             }
             builder.Append('|');
             builder.AppendLine();
+
             // Separator and alignment
             for (int col = 0; col < cols; col++)
             {
                 builder.Append('|');
-                builder.Append('-', maxColumnWidth[col]);
+                var alignment = columnAlignment[col];
+                if (alignment == Alignment.Left)
+                {
+                    builder.Append(':');
+                }
+                builder.Append('-', maxColumnWidth[col] - 1);
+                if (alignment == Alignment.Right)
+                {
+                    builder.Append(':');
+                }
             }
             builder.Append('|');
             builder.AppendLine();
+            
             // Rows
             for (int row = 0; row < rows; row++)
             {
