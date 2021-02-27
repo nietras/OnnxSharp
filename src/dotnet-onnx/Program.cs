@@ -13,7 +13,7 @@ using McMaster.Extensions.CommandLineUtils;
 [Command("dotnet onnx", Description = "Inspect and manipulate ONNX files"),
  Subcommand(typeof(CleanCommand)),
  Subcommand(typeof(SetDimCommand)),
- //Subcommand(typeof(Download))
+ Subcommand(typeof(InfoCommand))
 ]
 class Program
 {
