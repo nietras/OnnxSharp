@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using Google.Protobuf.Collections;
 using McMaster.Extensions.CommandLineUtils;
 using Onnx;
@@ -11,11 +13,14 @@ public class InfoCommand : InputCommand
 
     protected override void Run(ModelProto model)
     {
+        var sb = new StringBuilder();
+
         _console.WriteLine("Inputs");
         Print(model.Graph.Input, t => _console.WriteLine(t));
 
-        _console.WriteLine("Initializers");
-        Print(model.Graph.Initializer, t => _console.WriteLine(t));
+        _console.WriteLine("## Initializers");
+        MarkdownFormatter.Format(model.Graph.Initializer.Select(i => i.Summary()).ToList(), sb);
+        _console.WriteLine(sb.ToString());
 
         _console.WriteLine("Outputs");
         Print(model.Graph.Output, t => _console.WriteLine(t));        
