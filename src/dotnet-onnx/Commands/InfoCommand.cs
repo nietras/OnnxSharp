@@ -16,9 +16,10 @@ public class InfoCommand : InputCommand
         var sb = new StringBuilder();
 
         _console.WriteLine("Inputs");
+        // TODO: Remove initializers from inputs
         Print(model.Graph.Input, t => _console.WriteLine(t));
 
-        _console.WriteLine("## Initializers");
+        _console.WriteLine("## Initializers (Parameters etc.)");
         MarkdownFormatter.Format(model.Graph.Initializer.Select(i => i.Summary()).ToList(), sb);
         _console.WriteLine(sb.ToString());
 

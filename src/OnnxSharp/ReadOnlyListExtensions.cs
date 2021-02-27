@@ -22,5 +22,20 @@ namespace Onnx
                 return 0;
             }
         }
+
+        internal static T Single<T, TSelect>(this IReadOnlyList<T> fields, Func<T, TSelect> select, TSelect valueToFind)
+            where TSelect : IEquatable<TSelect>
+        {
+            for (int i = 0; i < fields.Count; i++)
+            {
+                var field = fields[i];
+                var value = select(field);
+                if (value.Equals(valueToFind))
+                {
+                    return field;
+                }
+            }
+            throw new ArgumentException($"Could not find field with value '{valueToFind}'");
+        }
     }
 }
