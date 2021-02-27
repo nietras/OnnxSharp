@@ -10,7 +10,7 @@ using McMaster.Extensions.CommandLineUtils;
 // TODO: Handle multiple command names etc.
 
 // https://github.com/jonstodle/DotNetSdkHelpers/blob/master/src/DotNetSdkHelpers/Program.cs
-[Command("dotnet-onnx", Description = "Inspect and manipulate ONNX files"),
+[Command("dotnet onnx", Description = "Inspect and manipulate ONNX files"),
  Subcommand(typeof(CleanCommand)),
  Subcommand(typeof(SetDimCommand)),
  //Subcommand(typeof(Download))

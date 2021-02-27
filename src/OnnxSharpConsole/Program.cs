@@ -31,9 +31,8 @@ var unmodifiedjsonOnnxOutputFilePath = Path.Combine(outputDirectory, onnxInputFi
 model.WriteJsonToFile(unmodifiedjsonOnnxOutputFilePath);
 
 var graph = model.Graph;
-graph.RemoveInitializersFromInputs();
-graph.RemoveUnnecessaryInitializerReshapes();
 
+graph.Clean();
 graph.SetDim(dimIndex: 0, DimParamOrValue.NewParam("N"));
 
 log($"Changed model to size {model.CalculateSize()}");
