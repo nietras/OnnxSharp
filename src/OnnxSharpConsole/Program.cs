@@ -34,7 +34,7 @@ var graph = model.Graph;
 graph.RemoveInitializersFromInputs();
 graph.RemoveUnnecessaryInitializerReshapes();
 
-graph.SetDim();
+graph.SetDim(dimIndex: 0, DimParamOrValue.NewParam("N"));
 
 log($"Changed model to size {model.CalculateSize()}");
 

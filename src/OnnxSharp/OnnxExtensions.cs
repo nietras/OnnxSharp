@@ -130,15 +130,23 @@ namespace Onnx
 
         /// <summary>
         /// Set dimension of inputs, value infos, outputs and potential Reshape ops.
+        /// Default sets leading dimension to dynamic batch size 'N'.
+        /// </summary>
+        public static void SetDim(this GraphProto graph) =>
+            graph.SetDim(dimIndex: 0, DimParamOrValue.NewParam("N"));
+
+        /// <summary>
+        /// Set dimension of inputs, value infos, outputs and potential Reshape ops.
         /// Can be used to make models have dynamic batch size or different static batch sizes.
         /// </summary>
-        // TODO: Cleanup signature, consider default params or use overloads
-        //       DimParamOrValue oldDim + DimParamOrValue newDim
-        public static void SetDim(this GraphProto graph, int dimIndex = 0, string dimParam = "N")
+        public static void SetDim(this GraphProto graph, int dimIndex, DimParamOrValue dimParamOrValue)
         {
             // Reshape ops have their "new shape" defined as input to the reshape op.
             // This input needs to be changed to reflect new dim e.g. be set -1 if dynamic.
-            SetDimInReshapes(graph, dimIndex);
+            var reshapeDimValue = dimParamOrValue.IsParam 
+                ? Ops.Reshape.DynamicReshapeValue 
+                : dimParamOrValue.Value;
+            SetDimInReshapes(graph, dimIndex, reshapeDimValue);
 
             // Should we set this based on nodes instead? Handling input, outputs based on that?
 
@@ -149,15 +157,15 @@ namespace Onnx
             var inferenceInputs = graph.Input.Where(i => !initializserNames.Contains(i.Name));
             foreach (var input in inferenceInputs)
             {
-                SetDim(input, dimIndex, dimParam);
+                SetDim(input, dimIndex, dimParamOrValue);
             }
             //SetDim(graph.Input, dimIndex, dimParam);
 
-            SetDim(graph.ValueInfo, dimIndex, dimParam);
-            SetDim(graph.Output, dimIndex, dimParam);
+            SetDim(graph.ValueInfo, dimIndex, dimParamOrValue);
+            SetDim(graph.Output, dimIndex, dimParamOrValue);
         }
 
-        static void SetDimInReshapes(GraphProto graph, int dimIndex)
+        static void SetDimInReshapes(GraphProto graph, int dimIndex, int dimValue)
         {
             var nodes = graph.Node;
             var initializers = graph.Initializer;
@@ -181,12 +189,12 @@ namespace Onnx
 
                     var shape = initializers.Single(tensor => tensor.Name, shapeInputName);
 
-                    SetDimInReshapeTensorShape(dimIndex, shape);
+                    SetDimInReshapeTensorShape(shape, dimIndex, dimValue);
                 }
             }
         }
 
-        static void SetDimInReshapeTensorShape(int dimIndex, TensorProto shape)
+        static void SetDimInReshapeTensorShape(TensorProto shape, int dimIndex, int dimValue)
         {
             Debug.Assert(shape.DataType == (int)TensorProto.Types.DataType.Int64);
             var dims = shape.Dims;
@@ -198,7 +206,7 @@ namespace Onnx
                     var int64Data = shape.Int64Data;
                     if (int64Data[dimIndex] == 1) // Dimension we replace
                     {
-                        int64Data[dimIndex] = Ops.Reshape.DynamicReshapeValue;
+                        int64Data[dimIndex] = dimValue;
                     }
                 }
                 if (!shape.RawData.IsEmpty)
@@ -209,36 +217,52 @@ namespace Onnx
                     if (rawAsInt64Data[dimIndex] == 1) // Dimension we replace
                     {
                         var newShape = rawAsInt64Data.ToArray();
-                        newShape[dimIndex] = Ops.Reshape.DynamicReshapeValue;
-                        shape.RawData = ByteString.CopyFrom(MemoryMarshal.Cast<long, byte>(newShape.AsSpan()));
+                        newShape[dimIndex] = dimValue;
+                        var newShapeBytes = MemoryMarshal.Cast<long, byte>(newShape.AsSpan());
+                        shape.RawData = ByteString.CopyFrom(newShapeBytes);
                     }
                 }
             }
         }
 
-        internal static void SetDim(RepeatedField<ValueInfoProto> valueInfos, int dimIndex, string dimParam)
+        internal static void SetDim(RepeatedField<ValueInfoProto> valueInfos, 
+            int dimIndex, DimParamOrValue dimParamOrValue)
         {
             for (int i = 0; i < valueInfos.Count; i++)
             {
                 var valueInfo = valueInfos[i];
-                SetDim(valueInfo, dimIndex, dimParam);
+                SetDim(valueInfo, dimIndex, dimParamOrValue);
             }
         }
 
-        internal static void SetDim(ValueInfoProto valueInfo, int dimIndex, string dimParam)
+        internal static void SetDim(ValueInfoProto valueInfo, 
+            int dimIndex, DimParamOrValue dimParamOrValue)
         {
             var shape = valueInfo.Type.TensorType.Shape;
             var dims = shape.Dim;
             var dim = dims[dimIndex];
             if (dim.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue)
             {
-                // TODO: Handle this better 
+                // TODO: Should perhaps be parameter that says 
+                //       bool shouldSetDimFor(dim)
                 if (dim.DimValue == 1)
                 {
-                    dim.ClearValue();
-                    dim.DimParam = dimParam;
-                    Trace.WriteLine(valueInfo.Name);
+                    SetDim(dim, dimParamOrValue);
                 }
+            }
+        }
+
+        internal static void SetDim(TensorShapeProto.Types.Dimension dim, 
+            DimParamOrValue dimParamOrValue)
+        {
+            dim.ClearValue();
+            if (dimParamOrValue.IsParam)
+            {
+                dim.DimParam = dimParamOrValue.Param;
+            }
+            else
+            {
+                dim.DimValue = dimParamOrValue.Value;
             }
         }
     }
