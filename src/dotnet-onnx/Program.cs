@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 
@@ -10,7 +11,8 @@ using McMaster.Extensions.CommandLineUtils;
 // TODO: Handle multiple command names etc.
 
 // https://github.com/jonstodle/DotNetSdkHelpers/blob/master/src/DotNetSdkHelpers/Program.cs
-[Command("dotnet onnx", Description = "Inspect and manipulate ONNX files"),
+// TODO: Switch from attributes to code instead
+[Command("dotnet onnx", Description = "Inspect and manipulate ONNX files. Copyright nietras 2021."),
  Subcommand(typeof(CleanCommand)),
  Subcommand(typeof(SetDimCommand)),
  Subcommand(typeof(InfoCommand))
