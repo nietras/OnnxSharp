@@ -9,17 +9,17 @@ namespace Onnx.Formatting
     {
         internal static void FormatAsTensors(this IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
         {
-            Format(valueInfos, TensorValueInfoSummary.ColumnSpecs, writer);
+            Format(valueInfos, ColumnSpecs.ValueInfo.Tensor, writer);
         }
 
         internal static void FormatAsSequences(this IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
         {
-            Format(valueInfos, SequenceValueInfoSummary.ColumnSpecs, writer);
+            Format(valueInfos, ColumnSpecs.ValueInfo.Sequence, writer);
         }
 
         internal static void Format(this IReadOnlyList<TensorProto> summaries, TextWriter writer)
         {
-            Format(summaries, TensorSummary.ColumnSpecs, writer);
+            Format(summaries, ColumnSpecs.Tensor, writer);
         }
 
         internal static void Format<T>(
