@@ -6,21 +6,14 @@ namespace Onnx
 {
     public static class ReadOnlyListExtensions
     {
-        public static long ProductSum(this IReadOnlyList<long> values)
+        public static long Product(this IReadOnlyList<long> values)
         {
-            if (values.Count > 0)
+            var product = 1L;
+            for (int i = 0; i < values.Count; i++)
             {
-                var sum = 1L;
-                for (int i = 0; i < values.Count; i++)
-                {
-                    sum *= values[i];
-                }
-                return sum;
+                product *= values[i];
             }
-            else
-            {
-                return 0;
-            }
+            return product;
         }
 
         internal static T Single<T, TSelect>(this IReadOnlyList<T> fields, Func<T, TSelect> select, TSelect valueToFind)

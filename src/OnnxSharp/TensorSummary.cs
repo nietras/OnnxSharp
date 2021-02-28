@@ -12,7 +12,7 @@ namespace Onnx
             Name = name;
             DataType = dataType;
             Dims = dims;
-            DimsProduct = dims.ProductSum();
+            DimsProduct = dims.Product();
             SizeInFile = sizeInFile;
         }
 
@@ -27,7 +27,7 @@ namespace Onnx
     {
         public static void Format(this IReadOnlyList<TensorSummary> summaries, StringBuilder builder)
         {
-            var columnNames = new string[] { "Name", "DataType", "Dims", "Dims (*)", "SizeInFile" };
+            var columnNames = new string[] { "Name", "DataType", "Dims", "Π Dims", "SizeInFile" };
             var columnAlignment = new Alignment[] { Alignment.Left, Alignment.Left, Alignment.Right, Alignment.Right, Alignment.Right };
 
             var maxColumnWidth = columnNames.Select(n => n.Length).ToArray();

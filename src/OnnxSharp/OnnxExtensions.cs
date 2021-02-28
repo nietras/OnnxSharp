@@ -92,8 +92,8 @@ namespace Onnx
                                     // Check shape compared to initializer shape
                                     var dataShape = dataInitializer.Dims.ToArray();
 
-                                    var outputShapeProductSum = outputShape.ProductSum();
-                                    var dataShapeProductSum = dataShape.ProductSum();
+                                    var outputShapeProductSum = outputShape.Product();
+                                    var dataShapeProductSum = dataShape.Product();
 
                                     if (outputShapeProductSum == dataShapeProductSum)
                                     {
