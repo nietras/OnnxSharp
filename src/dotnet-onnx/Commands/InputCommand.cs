@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 using Onnx;
@@ -6,10 +7,12 @@ using Onnx;
 public abstract class InputCommand : Command
 {
     protected readonly IConsole _console;
+    protected Action<string> LogInput;
 
     public InputCommand(IConsole console)
     {
         _console = console;
+        LogInput = t => _console.WriteLine(t);
     }
 
     [Argument(0, "input", Description = "Input file path")]
@@ -20,7 +23,7 @@ public abstract class InputCommand : Command
     {
         var model = ModelProto.Parser.ParseFromFile(Input);
 
-        _console.WriteLine($"Parsed input file '{Input}' of size {model.CalculateSize()}");
+        LogInput?.Invoke($"Parsed input file '{Input}' of size {model.CalculateSize()}");
 
         Run(model);
 
