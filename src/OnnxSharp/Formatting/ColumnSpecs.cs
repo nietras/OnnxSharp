@@ -12,20 +12,38 @@ namespace Onnx.Formatting
             internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> Tensor =
                 new ColumnSpec<ValueInfoProto>[]
                 {
-                new ("Name",       Align.Left,  i => i.Name),
-                new ("Type",       Align.Left,  i => i.Type.ValueCase.ToString()),
-                new ("ElemType",   Align.Left,  i => i.Type.TensorType.ElemType().ToString()),
-                new ("Shape",      Align.Right, i => FormatShape(i.Type.TensorType.Shape)),
-                new ("SizeInFile", Align.Right, i => i.CalculateSize().ToString()),
+                    new ("Name",       Align.Left,  i => i.Name),
+                    new ("Type",       Align.Left,  i => i.Type.ValueCase.ToString()),
+                    new ("ElemType",   Align.Left,  i => i.Type.TensorType.ElemType().ToString()),
+                    new ("Shape",      Align.Right, i => FormatShape(i.Type.TensorType.Shape)),
+                    new ("SizeInFile", Align.Right, i => i.CalculateSize().ToString()),
                 };
 
             internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> Sequence =
                 new ColumnSpec<ValueInfoProto>[]
                 {
-                new ("Name",       Align.Left, i => i.Name),
-                new ("Type",       Align.Left, i => i.Type.ValueCase.ToString()),
-                new ("ElemType",   Align.Left, i => i.Type.SequenceType.ElemType.ValueCase.ToString()),
-                new ("SizeInFile", Align.Left, i => i.CalculateSize().ToString()),
+                    new ("Name",       Align.Left, i => i.Name),
+                    new ("Type",       Align.Left, i => i.Type.ValueCase.ToString()),
+                    new ("ElemType",   Align.Left, i => i.Type.SequenceType.ElemType.ValueCase.ToString()),
+                    new ("SizeInFile", Align.Left, i => i.CalculateSize().ToString()),
+                };
+
+            internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> Map =
+                new ColumnSpec<ValueInfoProto>[]
+                {
+                    new ("Name",       Align.Left, i => i.Name),
+                    new ("Type",       Align.Left, i => i.Type.ValueCase.ToString()),
+                    new ("KeyType",    Align.Left, i => i.Type.MapType.KeyType().ToString()),
+                    new ("ValueType",  Align.Left, i => i.Type.MapType.ValueType.ValueCase.ToString()),
+                    new ("SizeInFile", Align.Left, i => i.CalculateSize().ToString()),
+                };
+
+            internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> None =
+                new ColumnSpec<ValueInfoProto>[]
+                {
+                    new ("Name",       Align.Left, i => i.Name),
+                    new ("Type",       Align.Left, i => i.Type.ValueCase.ToString()),
+                    new ("SizeInFile", Align.Left, i => i.CalculateSize().ToString()),
                 };
         }
 

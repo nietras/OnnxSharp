@@ -17,6 +17,16 @@ namespace Onnx.Formatting
             Format(valueInfos, ColumnSpecs.ValueInfo.Sequence, writer);
         }
 
+        internal static void FormatAsMaps(this IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
+        {
+            Format(valueInfos, ColumnSpecs.ValueInfo.Map, writer);
+        }
+
+        internal static void FormatAsNones(this IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
+        {
+            Format(valueInfos, ColumnSpecs.ValueInfo.None, writer);
+        }
+
         internal static void Format(this IReadOnlyList<TensorProto> summaries, TextWriter writer)
         {
             Format(summaries, ColumnSpecs.Tensor, writer);

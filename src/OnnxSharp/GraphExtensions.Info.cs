@@ -36,21 +36,27 @@ namespace Onnx
         static void Info(IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
         {
             var tensorTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.TensorType).ToList();
-            if (tensorTypes.Count > 0)
-            {
-                writer.WriteLine("### Tensors");
-                MarkdownFormatter.FormatAsTensors(tensorTypes, writer);
-                writer.WriteLine();
-            }
+            WriteInfoIfAny(tensorTypes, "Tensors", MarkdownFormatter.FormatAsTensors, writer);
+
             var sequenceTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.SequenceType).ToList();
-            if (sequenceTypes.Count > 0)
+            WriteInfoIfAny(sequenceTypes, "Sequences", MarkdownFormatter.FormatAsSequences, writer);
+
+            var mapTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.MapType).ToList();
+            WriteInfoIfAny(mapTypes, "Maps", MarkdownFormatter.FormatAsMaps, writer);
+
+            var noneTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.None).ToList();
+            WriteInfoIfAny(noneTypes, "Nones", MarkdownFormatter.FormatAsNones, writer);
+        }
+
+        static void WriteInfoIfAny<T>(IReadOnlyList<T> values, string name,
+            Action<IReadOnlyList<T>, TextWriter> info, TextWriter writer)
+        {
+            if (values.Count > 0)
             {
-                writer.WriteLine("### Sequences");
-                MarkdownFormatter.FormatAsSequences(sequenceTypes, writer);
+                writer.WriteLine($"### {name}");
+                info(values, writer);
                 writer.WriteLine();
             }
-            var mapTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.MapType).ToList();
-            var noneTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.None).ToList();
         }
     }
 }
