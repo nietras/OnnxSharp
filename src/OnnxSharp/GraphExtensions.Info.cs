@@ -25,26 +25,32 @@ namespace Onnx
 
             writer.WriteLine("## Inputs without Initializers");
             Info(inferenceInputs, writer);
-            writer.WriteLine();
 
             writer.WriteLine("## Outputs");
             Info(graph.Output, writer);
-            writer.WriteLine();
 
             writer.WriteLine("## Initializers (Parameters etc.)");
-            Info(graph.Initializer, writer);
+            MarkdownFormatter.Format(graph.Initializer, writer);
         }
 
         static void Info(IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
         {
-            var summaries = valueInfos.Select(i => i.Summary()).ToList();
-            MarkdownFormatter.Format(summaries, writer);
-        }
-
-        static void Info(IReadOnlyList<TensorProto> tensors, TextWriter writer)
-        {
-            var summaries = tensors.Select(i => i.Summary()).ToList();
-            MarkdownFormatter.Format(summaries, writer);
+            var tensorTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.TensorType).ToList();
+            if (tensorTypes.Count > 0)
+            {
+                writer.WriteLine("### Tensors");
+                MarkdownFormatter.FormatAsTensors(tensorTypes, writer);
+                writer.WriteLine();
+            }
+            var sequenceTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.SequenceType).ToList();
+            if (sequenceTypes.Count > 0)
+            {
+                writer.WriteLine("### Sequences");
+                MarkdownFormatter.FormatAsSequences(sequenceTypes, writer);
+                writer.WriteLine();
+            }
+            var mapTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.MapType).ToList();
+            var noneTypes = valueInfos.Where(i => i.Type.ValueCase == TypeProto.ValueOneofCase.None).ToList();
         }
     }
 }

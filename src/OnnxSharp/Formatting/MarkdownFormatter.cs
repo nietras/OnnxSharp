@@ -7,14 +7,21 @@ namespace Onnx.Formatting
 {
     internal static class MarkdownFormatter
     {
-        internal static void Format(this IReadOnlyList<ValueInfoSummary> summaries, TextWriter writer)
+        internal static void FormatAsTensors(this IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
         {
-            Format(summaries,
-                ValueInfoSummary.ColumnNames, ValueInfoSummary.ColumnAligns, ValueInfoSummary.ColumnGetters,
+            Format(valueInfos,
+                TensorValueInfoSummary.ColumnNames, TensorValueInfoSummary.ColumnAligns, TensorValueInfoSummary.ColumnGetters,
                 writer);
         }
 
-        internal static void Format(this IReadOnlyList<TensorSummary> summaries, TextWriter writer)
+        internal static void FormatAsSequences(this IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
+        {
+            Format(valueInfos,
+                SequenceValueInfoSummary.ColumnNames, SequenceValueInfoSummary.ColumnAligns, SequenceValueInfoSummary.ColumnGetters,
+                writer);
+        }
+
+        internal static void Format(this IReadOnlyList<TensorProto> summaries, TextWriter writer)
         {
             Format(summaries, 
                 TensorSummary.ColumnNames, TensorSummary.ColumnAligns, TensorSummary.ColumnGetters, 
