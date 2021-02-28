@@ -6,6 +6,15 @@ namespace Onnx.Formatting
 {
     internal class SequenceValueInfoSummary
     {
+        internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> ColumnSpecs = 
+            new ColumnSpec<ValueInfoProto>[] 
+            { 
+                new ("Name",       Align.Left, i => i.Name),
+                new ("Type",       Align.Left, i => i.Type.ValueCase.ToString()),
+                new ("ElemType",   Align.Left, i => i.Type.SequenceType.ElemType.ValueCase.ToString()),
+                new ("SizeInFile", Align.Left, i => i.CalculateSize().ToString()),
+            };
+
         internal static readonly IReadOnlyList<string> ColumnNames =
             new string[] { "Name", "Type", "ElemType", "SizeInFile" };
 
@@ -21,5 +30,5 @@ namespace Onnx.Formatting
                 i => i.CalculateSize().ToString(),
             };
     }
-
 }
+

@@ -6,20 +6,14 @@ namespace Onnx.Formatting
 {
     internal class TensorSummary
     {
-        internal static readonly IReadOnlyList<string> ColumnNames = 
-            new string[] { "Name", "DataType", "Dims", "Π Dims", "SizeInFile" };
-
-        internal static readonly IReadOnlyList<Align> ColumnAligns =
-            new Align[] { Align.Left, Align.Left, Align.Right, Align.Right, Align.Right };
-
-        internal static readonly IReadOnlyList<Func<TensorProto, string>> ColumnGetters =
-            new Func<TensorProto, string>[]
-            {  
-                t => t.Name,
-                t => t.DataType().ToString(),
-                t => string.Join("x", t.Dims),
-                t => t.Dims.Product().ToString(),
-                t => t.CalculateSize().ToString(),
+        internal static readonly IReadOnlyList<ColumnSpec<TensorProto>> ColumnSpecs =
+            new ColumnSpec<TensorProto>[]
+            {
+                new ("Name",       Align.Left,  t => t.Name),
+                new ("DataType",   Align.Left,  t => t.DataType().ToString()),
+                new ("Dims",       Align.Right, t => string.Join("x", t.Dims)),
+                new ("Π(Dims)",    Align.Right, t => t.Dims.Product().ToString()),
+                new ("SizeInFile", Align.Right, t => t.CalculateSize().ToString()),
             };
     }
 }

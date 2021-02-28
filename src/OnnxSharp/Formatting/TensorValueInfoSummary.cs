@@ -6,20 +6,14 @@ namespace Onnx.Formatting
 {
     internal class TensorValueInfoSummary
     {
-        internal static readonly IReadOnlyList<string> ColumnNames =
-            new string[] { "Name", "Type", "ElemType", "Shape", "SizeInFile" };
-
-        internal static readonly IReadOnlyList<Align> ColumnAligns =
-            new Align[] { Align.Left, Align.Left, Align.Left, Align.Right, Align.Right };
-
-        internal static readonly IReadOnlyList<Func<ValueInfoProto, string>> ColumnGetters =
-            new Func<ValueInfoProto, string>[]
+        internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> ColumnSpecs =
+            new ColumnSpec<ValueInfoProto>[]
             {
-                i => i.Name,
-                i => i.Type.ValueCase.ToString(),
-                i => i.Type.TensorType.ElemType().ToString(),
-                i => FormatShape(i.Type.TensorType.Shape),
-                i => i.CalculateSize().ToString(),
+                new ("Name",       Align.Left,  i => i.Name),
+                new ("Type",       Align.Left,  i => i.Type.ValueCase.ToString()),
+                new ("ElemType",   Align.Left,  i => i.Type.TensorType.ElemType().ToString()),
+                new ("Shape",      Align.Right, i => FormatShape(i.Type.TensorType.Shape)),
+                new ("SizeInFile", Align.Right, i => i.CalculateSize().ToString()),
             };
 
         static string FormatShape(TensorShapeProto shape)

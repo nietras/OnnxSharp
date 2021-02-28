@@ -9,36 +9,28 @@ namespace Onnx.Formatting
     {
         internal static void FormatAsTensors(this IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
         {
-            Format(valueInfos,
-                TensorValueInfoSummary.ColumnNames, TensorValueInfoSummary.ColumnAligns, TensorValueInfoSummary.ColumnGetters,
-                writer);
+            Format(valueInfos, TensorValueInfoSummary.ColumnSpecs, writer);
         }
 
         internal static void FormatAsSequences(this IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
         {
-            Format(valueInfos,
-                SequenceValueInfoSummary.ColumnNames, SequenceValueInfoSummary.ColumnAligns, SequenceValueInfoSummary.ColumnGetters,
-                writer);
+            Format(valueInfos, SequenceValueInfoSummary.ColumnSpecs, writer);
         }
 
         internal static void Format(this IReadOnlyList<TensorProto> summaries, TextWriter writer)
         {
-            Format(summaries, 
-                TensorSummary.ColumnNames, TensorSummary.ColumnAligns, TensorSummary.ColumnGetters, 
-                writer);
+            Format(summaries, TensorSummary.ColumnSpecs, writer);
         }
 
         internal static void Format<T>(
             IReadOnlyList<T> values,
-            IReadOnlyList<string> columnNames,
-            IReadOnlyList<Align> columnAligns, 
-            IReadOnlyList<Func<T, string>> columnGetters, 
+            IReadOnlyList<ColumnSpec<T>> columnSpecs,
             TextWriter writer)
         {
-            var maxColumnWidth = columnNames.Select(n => n.Length).ToArray();
+            var maxColumnWidth = columnSpecs.Select(n => n.Name.Length).ToArray();
 
             int rows = values.Count;
-            int cols = columnNames.Count;
+            int cols = columnSpecs.Count;
 
             var table = new string[rows, cols];
             for (int row = 0; row < rows; row++)
@@ -47,20 +39,19 @@ namespace Onnx.Formatting
 
                 for (int col = 0; col < cols; col++)
                 {
-                    var getter = columnGetters[col];
-                    var text = getter(summary);
+                    var spec = columnSpecs[col];
+                    var text = spec.Get(summary);
                     table[row, col] = text;
                     maxColumnWidth[col] = Math.Max(maxColumnWidth[col], text.Length);
                 }
             }
 
-            Format(table, columnNames, columnAligns, maxColumnWidth, writer);
+            Format(table, columnSpecs, maxColumnWidth, writer);
         }
 
         internal static void Format(
             string[,] table,
-            IReadOnlyList<string> columnNames,
-            IReadOnlyList<Align> columnAligns,
+            IReadOnlyList<ColumnSpec> columnSpecs,
             IReadOnlyList<int> columnWidths,
             TextWriter writer)
         {
@@ -72,7 +63,7 @@ namespace Onnx.Formatting
             // Column Names
             for (int col = 0; col < cols; col++)
             {
-                var columnName = columnNames[col];
+                var columnName = columnSpecs[col].Name;
                 writer.Write('|');
                 writer.Write(columnName);
                 writer.Write(' ', columnWidths[col] - columnName.Length);
@@ -84,13 +75,13 @@ namespace Onnx.Formatting
             for (int col = 0; col < cols; col++)
             {
                 writer.Write('|');
-                var alignment = columnAligns[col];
-                if (alignment == Align.Left)
+                var align = columnSpecs[col].Align;
+                if (align == Align.Left)
                 {
                     writer.Write(':');
                 }
                 writer.Write('-', columnWidths[col] - 1);
-                if (alignment == Align.Right)
+                if (align == Align.Right)
                 {
                     writer.Write(':');
                 }
@@ -103,9 +94,10 @@ namespace Onnx.Formatting
             {
                 for (int col = 0; col < cols; col++)
                 {
+                    var align = columnSpecs[col].Align;
                     var value = table[row, col];
                     writer.Write('|');
-                    writer.WriteAligned(value, columnAligns[col], ' ', columnWidths[col]);
+                    writer.WriteAligned(value, align, ' ', columnWidths[col]);
                 }
                 writer.Write('|');
                 writer.WriteLine();
