@@ -18,8 +18,8 @@ public class SetDimCommand : InputOutputCommand
         // Should this not be before loading input? Is the abstract base really that good?
 
         var dimParamOrValue = int.TryParse(Dim, out var dimValue)
-            ? DimParamOrValue.NewValue(dimValue)
-            : DimParamOrValue.NewParam(Dim);
+            ? DimParamOrValue.New(dimValue)
+            : DimParamOrValue.New(Dim);
 
         _console.WriteLine($"Setting dimension at {Index} to '{dimParamOrValue}'");
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Google.Protobuf.Collections;
 
-namespace Onnx
+namespace Onnx.Collections
 {
+    /// <summary>Convenience extension methods for <see cref="IList{T}"/>.</summary>
     internal static class ListExtensions
     {
         internal static bool TryRemove<T, TSelect>(this IList<T> fields, Func<T, TSelect> select, Predicate<TSelect> predicate)

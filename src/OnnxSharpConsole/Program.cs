@@ -33,7 +33,7 @@ model.WriteJsonToFile(unmodifiedjsonOnnxOutputFilePath);
 var graph = model.Graph;
 
 graph.Clean();
-graph.SetDim(dimIndex: 0, DimParamOrValue.NewParam("N"));
+graph.SetDim(dimIndex: 0, DimParamOrValue.New("N"));
 
 log($"Changed model to size {model.CalculateSize()}");
 

@@ -1,12 +1,10 @@
-﻿using Google.Protobuf;
-using System;
+﻿using System;
 using System.IO;
+using Google.Protobuf;
 
 namespace Onnx
 {
-    /// <summary>
-    /// Convenience extension methods to MessageParser.
-    /// </summary>
+    /// <summary>Convenience <see cref="MessageParser{T}"/> extension methods.</summary>
     public static partial class MessageParserExtensions
     {
         /// <summary>

@@ -3,9 +3,7 @@ using System.IO;
 
 namespace Onnx
 {
-    /// <summary>
-    /// Convenience message extension methods.
-    /// </summary>
+    /// <summary>Convenience <see cref="IMessage"/> extension methods.</summary>
     public static partial class MessageExtensions
     {
         /// <summary>

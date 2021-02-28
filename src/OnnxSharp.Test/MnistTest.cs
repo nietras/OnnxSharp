@@ -71,7 +71,7 @@ namespace OnnxSharp.Test
             //model.WriteIndentedJsonToFile($"mnist-8-{nameof(SetDim)}-before.json");
 
             // Act
-            model.Graph.SetDim(dimIndex: 0, DimParamOrValue.NewParam("N"));
+            model.Graph.SetDim(dimIndex: 0, DimParamOrValue.New("N"));
 
             //model.WriteToFile($"mnist-8-{nameof(SetDim)}-after.onnx");
             //model.WriteIndentedJsonToFile($"mnist-8-{nameof(SetDim)}-after.json");

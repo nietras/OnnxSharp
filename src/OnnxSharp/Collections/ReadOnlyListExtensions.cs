@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Onnx
+namespace Onnx.Collections
 {
+    /// <summary>Convenience extension methods for <see cref="IReadOnlyList{T}"/>.</summary>
     public static class ReadOnlyListExtensions
     {
+        /// <summary>Compute the product of all values.</summary>
         public static long Product(this IReadOnlyList<long> values)
         {
             var product = 1L;

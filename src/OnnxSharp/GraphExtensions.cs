@@ -5,13 +5,12 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
+using Onnx.Collections;
 
 namespace Onnx
 {
-    /// <summary>
-    /// Extensions to ONNX protobuf functionality.
-    /// </summary>
-    public static partial class OnnxExtensions
+    /// <summary>Extension methods to ONNX graph.</summary>
+    public static partial class GraphExtensions
     {
         /// <summary>
         /// Clean graph for inference.
@@ -142,7 +141,7 @@ namespace Onnx
         /// Default sets leading dimension to dynamic batch size 'N'.
         /// </summary>
         public static void SetDim(this GraphProto graph) =>
-            graph.SetDim(dimIndex: 0, DimParamOrValue.NewParam("N"));
+            graph.SetDim(dimIndex: 0, DimParamOrValue.New("N"));
 
         /// <summary>
         /// Set dimension of inputs, value infos, outputs and potential Reshape ops.
