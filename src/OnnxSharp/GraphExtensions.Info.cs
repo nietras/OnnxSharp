@@ -23,8 +23,8 @@ namespace Onnx
             var initializerNameSet = new HashSet<string>(graph.Initializer.Select(i => i.Name));
             var inferenceInputs = graph.Input.Where(i => !initializerNameSet.Contains(i.Name)).ToList();
 
-            writer.WriteLine("## Inputs without Initializers");
-            Info(inferenceInputs, writer);
+            writer.WriteLine("## Inputs");
+            Info(graph.Input, writer);
 
             writer.WriteLine("## Outputs");
             Info(graph.Output, writer);
