@@ -23,7 +23,7 @@ Install latest version of .NET:
 |Clean         |`model.Graph.Clean();`  |`dotnet onnx clean mnist-8.onnx mnist-8-clean.onnx`    |
 |SetDim        |`model.Graph.SetDim();`  |`dotnet onnx setdim mnist-8.onnx mnist-8-setdim.onnx`    |
 
-# Status
+# Source Code
 Base functionality is based on:
 ```
 .\protoc.exe .\onnx.proto3 --csharp_out=OnnxSharp
