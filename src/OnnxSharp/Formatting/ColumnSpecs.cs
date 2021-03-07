@@ -120,7 +120,7 @@ namespace Onnx.Formatting
                     ? GetStats(rawValues, min, add, divide, max)
                     : GetStats(values, min, add, divide, max);
 
-                return $"({stats.min},{stats.mean},{stats.max})";
+                return $"({stats.min:E3},{stats.mean:E3},{stats.max:E3})";
             }
             else
             {

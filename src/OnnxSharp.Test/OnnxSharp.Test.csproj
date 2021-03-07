@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <!-- Test file from: https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx -->
-    <EmbeddedResource Include="mnist-8.onnx" />
+    <EmbeddedResource Include="*.onnx" />
   </ItemGroup>
 
   <ItemGroup>

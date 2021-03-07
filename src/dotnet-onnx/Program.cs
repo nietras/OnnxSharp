@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
+﻿using System.IO;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 
@@ -28,9 +26,7 @@ class Program
         app.Conventions.UseDefaultConventions();
         app.UsePagerForHelpText = false;
 
-        var result = app.Execute(args);
-
-        return Task.FromResult(result);
+        return app.ExecuteAsync(args);
     }
 
     public Task<int> OnExecuteAsync(CommandLineApplication app)

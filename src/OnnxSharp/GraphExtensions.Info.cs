@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Onnx.Formatting;
 
 namespace Onnx
@@ -22,15 +21,26 @@ namespace Onnx
         {
             var initializerNameSet = new HashSet<string>(graph.Initializer.Select(i => i.Name));
             var inferenceInputs = graph.Input.Where(i => !initializerNameSet.Contains(i.Name)).ToList();
+            var initializerInputs = graph.Input.Where(i => initializerNameSet.Contains(i.Name)).ToList();
 
-            writer.WriteLine("## Inputs");
-            Info(graph.Input, writer);
+            writer.WriteLine("## Inputs without Initializer");
+            Info(inferenceInputs, writer);
 
+            writer.WriteLine();
             writer.WriteLine("## Outputs");
             Info(graph.Output, writer);
 
+            writer.WriteLine();
+            writer.WriteLine("## Inputs with Initializer");
+            Info(initializerInputs, writer);
+
+            writer.WriteLine();
             writer.WriteLine("## Initializers (Parameters etc.)");
             MarkdownFormatter.Format(graph.Initializer, writer);
+
+            writer.WriteLine();
+            writer.WriteLine("## Value Infos");
+            Info(graph.ValueInfo, writer);
         }
 
         static void Info(IReadOnlyList<ValueInfoProto> valueInfos, TextWriter writer)
@@ -55,7 +65,6 @@ namespace Onnx
             {
                 writer.WriteLine($"### {name}");
                 info(values, writer);
-                writer.WriteLine();
             }
         }
     }
