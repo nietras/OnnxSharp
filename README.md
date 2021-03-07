@@ -7,16 +7,19 @@
 |`OnnxSharp`  |[![NuGet](https://img.shields.io/nuget/v/OnnxSharp)](https://www.nuget.org/packages/OnnxSharp/) [![Downloads](https://img.shields.io/nuget/dt/OnnxSharp)](https://www.nuget.org/packages/OnnxSharp/) |
 |`dotnet-onnx`|[![NuGet](https://img.shields.io/nuget/v/dotnet-onnx)](https://www.nuget.org/packages/dotnet-onnx/) [![Downloads](https://img.shields.io/nuget/dt/dotnet-onnx)](https://www.nuget.org/packages/dotnet-onnx/) |
 
-
 # `OnnxSharp` library and `dotnet-onnx` tool
 ONNX format parsing and manipulation in C# and in command line .NET tool.
 
 # Quick Guide
+Install latest version of .NET:
+* PowerShell (Windows): [https://dot.net/v1/dotnet-install.ps1](https://dot.net/v1/dotnet-install.ps1)
+* Bash (Linux/macOS): [https://dot.net/v1/dotnet-install.sh](https://dot.net/v1/dotnet-install.sh)
+
 |What          |How (code)                                         |How (tool)                     |
 |--------------|-------------------------------------------------------|-------------------------------|
-|Install .NET  |                                                       |                               |
 |Install       |`dotnet add PROJECT.csproj package OnnxSharp`      |`dotnet tool install dotnet-onnx -g`    |
-|Parse/Info    |`var model = ModelProto.Parser.ParseFromFile("mnist-8.onnx");`|`dotnet onnx info mnist-8.onnx`    |
+|Parse         |`var model = ModelProto.Parser.ParseFromFile("mnist-8.onnx");`|-    |
+|Info          |`var info = model.Info();`|`dotnet onnx info mnist-8.onnx`    |
 |Clean         |`model.Graph.Clean();`  |`dotnet onnx clean mnist-8.onnx mnist-8-clean.onnx`    |
 |SetDim        |`model.Graph.SetDim();`  |`dotnet onnx setdim mnist-8.onnx mnist-8-setdim.onnx`    |
 
@@ -25,7 +28,7 @@ Base functionality is based on:
 ```
 .\protoc.exe .\onnx.proto3 --csharp_out=OnnxSharp
 ```
-Everything else written as extensions to this.
+Everything else written in beautiful C# 9.0 as extensions to this.
 
 # Example Code
 ```csharp
