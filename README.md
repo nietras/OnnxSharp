@@ -19,7 +19,7 @@ Install latest version of .NET:
 |--------------|-------------------------------------------------------|-------------------------------|
 |Install       |`dotnet add PROJECT.csproj package OnnxSharp`      |`dotnet tool install dotnet-onnx -g`    |
 |Parse         |`var model = ModelProto.Parser.ParseFromFile("mnist-8.onnx");`|-    |
-|Info          |`var info = model.Info();`|`dotnet onnx info mnist-8.onnx`    |
+|Info          |`var info = model.Graph.Info();`|`dotnet onnx info mnist-8.onnx`    |
 |Clean         |`model.Graph.Clean();`  |`dotnet onnx clean mnist-8.onnx mnist-8-clean.onnx`    |
 |SetDim        |`model.Graph.SetDim();`  |`dotnet onnx setdim mnist-8.onnx mnist-8-setdim.onnx`    |
 
