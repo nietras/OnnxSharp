@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{604A7FA2-1
 		rename.ps1 = rename.ps1
 		restore.ps1 = restore.ps1
 		test.ps1 = test.ps1
+		update-tool-from-build.ps1 = update-tool-from-build.ps1
 		update.ps1 = update.ps1
 	EndProjectSection
 EndProject

@@ -9,18 +9,14 @@ namespace Onnx
     /// <summary>Extension methods to ONNX graph.</summary>
     public static partial class GraphExtensions
     {
-        /// <summary>
-        /// Clean graph for inference.
-        /// </summary>
+        /// <summary>Clean graph for inference.</summary>
         public static void Clean(this GraphProto graph)
         {
             graph.RemoveInitializersFromInputs();
             graph.RemoveUnnecessaryInitializerReshapes();
         }
 
-        /// <summary>
-        /// Remove initializers from inputs of graph.
-        /// </summary>
+        /// <summary>Remove initializers from inputs of graph.</summary>
         // https://github.com/microsoft/onnxruntime/blob/master/tools/python/remove_initializer_from_input.py
         public static void RemoveInitializersFromInputs(this GraphProto graph)
         {
@@ -38,9 +34,7 @@ namespace Onnx
             }
         }
 
-        /// <summary>
-        /// Remove unnecessary initializer reshapes from graph.
-        /// </summary>
+        /// <summary>Remove unnecessary initializer reshapes from graph.</summary>
         // https://github.com/microsoft/onnxruntime/blob/master/tools/python/remove_initializer_from_input.py
         public static void RemoveUnnecessaryInitializerReshapes(this GraphProto graph)
         {
