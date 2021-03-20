@@ -7,12 +7,12 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <TargetFrameworks>net461;net50</TargetFrameworks>
+    <TargetFrameworks>net461;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- Test file from: https://github.com/onnx/models/blob/master/vision/classification/mnist/model/mnist-8.onnx -->
-    <EmbeddedResource Include="mnist-8.onnx" />
+    <EmbeddedResource Include="*.onnx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +23,10 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework) == 'net461'">
+    <PackageReference Include="System.Text.Json" Version="5.0" />
   </ItemGroup>
 
   <!-- Change logical name of all embedded resources to be like file system paths. -->

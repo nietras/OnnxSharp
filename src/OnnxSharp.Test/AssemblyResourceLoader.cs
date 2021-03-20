@@ -7,13 +7,22 @@ namespace OnnxSharp.Test
 {
     public static class AssemblyResourceLoader
     {
-        public static readonly string ResourceNamespace = typeof(AssemblyResourceLoader).Assembly.GetName().Name;
+        public static readonly string ResourceNamespace = 
+            typeof(AssemblyResourceLoader).Assembly.GetName().Name;
         public const string ResourceNamePrefix = "";
 
-        public static string[] GetStringArray(string resourceName)
+        public static byte[] GetBytes(string resourceName)
         {
-            return GetString(resourceName).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            using (var stream = GetStream(resourceName))
+            using (var memoryStream = new MemoryStream())
+            {
+                stream.CopyTo(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
+
+        public static string[] GetLines(string resourceName) => GetString(resourceName)
+            .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
         public static string GetString(string resourceName)
         {
@@ -24,10 +33,8 @@ namespace OnnxSharp.Test
             }
         }
 
-        public static string GetFullResourceName(string resourceName)
-        {
-            return ResourceNamePrefix + resourceName;
-        }
+        public static string GetFullResourceName(string resourceName) =>
+            ResourceNamePrefix + resourceName;
 
         public static string FindResourceName(Func<string, bool> filter)
         {
@@ -35,14 +42,18 @@ namespace OnnxSharp.Test
 
             if (names.Length == 0)
             {
-                throw new ArgumentException("Could not find any resource. The desired file might not have been defined as Embedded Resource.");
+                throw new ArgumentException("Could not find any resource. " +
+                    "The desired file might not have been defined as Embedded Resource.");
             }
             else if (names.Length != 1)
             {
-                throw new ArgumentException($"Ambiguous name, cannot identify resource - found {names.Length} possible candidates.");
+                throw new ArgumentException($"Ambiguous name, cannot identify resource - " +
+                    $"found {names.Length} possible candidates.");
             }
-
-            return names.Single();
+            else
+            {
+                return names[0];
+            }
         }
 
         public static string[] FindResourceNames(Func<string, bool> filter)
@@ -66,7 +77,8 @@ namespace OnnxSharp.Test
             var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(fullResourceName);
             if (stream == null)
             {
-                throw new ArgumentException($"Could not find resource '{resourceName}'. The desired file might not have been defined as Embedded Resource.");
+                throw new ArgumentException($"Could not find resource '{resourceName}'. " +
+                    $"The desired file might not have been defined as Embedded Resource.");
             }
             return stream;
         }

@@ -1,46 +1,18 @@
-﻿using System.IO;
-using System.Linq;
-using Google.Protobuf;
+﻿using Onnx;
 
 // Examples see https://github.com/onnx/models
 var onnxInputFilePath = @"mnist-8.onnx";
 
-var onnxInputFileName = Path.GetFileNameWithoutExtension(onnxInputFilePath);
-var outputDirectory = Path.GetDirectoryName(onnxInputFilePath);
+var model = ModelProto.Parser.ParseFromFile(onnxInputFilePath);
 
-using (var file = File.OpenRead(onnxInputFilePath))
-{
-    var model = Onnx.ModelProto.Parser.ParseFrom(file);
-    var graph = model.Graph;
-    // Shapes are defined in inputs, values and outputs
-    var inputs = graph.Input;
-    var values = graph.ValueInfo;
-    var outputs = graph.Output;
+var graph = model.Graph;
+// Clean graph e.g. remove initializers from inputs that may prevent constant folding
+graph.Clean();
+// Set dimension in graph to enable dynamic batch size during inference
+graph.SetDim(dimIndex: 0, DimParamOrValue.New("N"));
+// Get summarized info about the graph
+var info = graph.Info();
 
-    foreach (var value in inputs.Concat(values).Concat(outputs))
-    {
-        var shape = value.Type.TensorType.Shape;
-        var dims = shape.Dim;
-        var dim = dims[0];
-        //dim.DimValue = -1;
-        dim.ClearValue();
-        dim.DimValue = -1; // Or don't set it
-        //dim.DimParam = "None"; // Or don't set it, unset dimension means dynamic
-    }
+System.Console.WriteLine(info);
 
-    var fileNameSuffix = "-dynamic-leading-dimension";
-    var outputFilePathPrefix = Path.Combine(outputDirectory, onnxInputFileName + fileNameSuffix);
-
-    var onnxOutputFilePath = outputFilePathPrefix + ".onnx";
-    using (var outputFile = File.Create(onnxOutputFilePath))
-    {
-        model.WriteTo(outputFile);
-    }
-
-    var jsonOnnxOutputFilePath = outputFilePathPrefix + ".json";
-    using (var output = new StreamWriter(jsonOnnxOutputFilePath))
-    {
-        var fmt = new JsonFormatter(JsonFormatter.Settings.Default);
-        fmt.Format(model, output);
-    }
-}
+model.WriteToFile(@"mnist-8-clean-dynamic-batch-size.onnx");

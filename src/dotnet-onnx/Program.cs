@@ -1,10 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
-using Google.Protobuf;
 using McMaster.Extensions.CommandLineUtils;
-using Onnx;
 
 // https://github.com/natemcmaster/CommandLineUtils
 // https://natemcmaster.github.io/CommandLineUtils/docs/advanced/dependency-injection.html
@@ -13,11 +9,12 @@ using Onnx;
 // TODO: Handle multiple command names etc.
 
 // https://github.com/jonstodle/DotNetSdkHelpers/blob/master/src/DotNetSdkHelpers/Program.cs
-[Command("dotnet-onnx", Description = "Inspect and manipulate ONNX files"),
- Subcommand(typeof(Clean)),
- //Subcommand(typeof(List)),
- //Subcommand(typeof(Download))
-    ]
+// TODO: Switch from attributes to code instead
+[Command("dotnet onnx", Description = "Inspect and manipulate ONNX files. Copyright nietras 2021."),
+ Subcommand(typeof(CleanCommand)),
+ Subcommand(typeof(SetDimCommand)),
+ Subcommand(typeof(InfoCommand))
+]
 class Program
 {
     static Task<int> Main(string[] args)
@@ -31,54 +28,11 @@ class Program
 
         return app.ExecuteAsync(args);
     }
-}
 
-public abstract class Command
-{
-    public async Task OnExecuteAsync()
+    public Task<int> OnExecuteAsync(CommandLineApplication app)
     {
-        try
-        {
-            await Run();
-        }
-        //catch (CliException e)
-        catch (Exception e)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Error.WriteLine(e.Message);
-            Console.ResetColor();
-            //Environment.Exit(e.ExitCode);
-        }
-    }
+        app.ShowHelp();
 
-    public abstract Task Run();
-}
-
-[Command("clean", Description = "Clean graph for inference e.g. remove initializers from inputs")]
-public class Clean : Command
-{
-    [Argument(0, "input", Description = "Input file path")]
-    [Required]
-    public string Input { get; }
-
-    [Argument(1, "output", Description = "Output file path")]
-    [Required]
-    public string Output { get; }
-
-    public override Task Run()
-    {
-        using (var inputFile = File.OpenRead(Input))
-        {
-            var model = ModelProto.Parser.ParseFrom(inputFile);
-
-            model.RemoveInitializersFromInputs();
-
-            using (var outputFile = File.Create(Output))
-            {
-                model.WriteTo(outputFile);
-            }
-        }
-
-        return Task.CompletedTask;
+        return Task.FromResult<int>(0);
     }
 }
