@@ -29,7 +29,7 @@ namespace Onnx
                 {
                     // https://github.com/protocolbuffers/protobuf/blob/master/csharp/src/Google.Protobuf/Collections/RepeatedField.cs
                     var removed = inputs.Remove(input);
-                    Trace.WriteLine($"{removed} {inputs.Count}");
+                    Debug.Assert(removed, $"{removed} {inputs.Count}");
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace Onnx
                     var outputs = node.Output;
 
                     // Expected Reshape takes 2 inputs and has 1 output
-                    if (inputs.Count == opSpec.Inputs && outputs.Count == opSpec.Outputs) 
+                    if (inputs.Count == opSpec.Inputs && outputs.Count == opSpec.Outputs)
                     {
                         var dataName = inputs[0];
                         var shapeName = inputs[1];
@@ -70,7 +70,7 @@ namespace Onnx
                             var outputShapeValue = valueInfos.Single(v => v.Name, reshapeOutputName);
 
                             var outputShapeDims = outputShapeValue.Type.TensorType.Shape.Dim;
-                            var allValue = outputShapeDims.All(d => d.ValueCase == 
+                            var allValue = outputShapeDims.All(d => d.ValueCase ==
                                 TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue);
                             if (allValue)
                             {
