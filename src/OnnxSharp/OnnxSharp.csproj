@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <!-- Custom properties need to be included before the Sdk.props 
        The Directory.Build.props way of doing this would have to be replicated in multiple places,
        so instead using the old props customization trick but define it before Sdk.props. -->
@@ -7,7 +7,7 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <RootNamespace>Onnx</RootNamespace>
 
     <Description>ONNX format parsing and manipulation in C#.</Description>
@@ -30,7 +30,7 @@
   
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.28.1" />
-	  <!--<PackageReference Include="Google.Protobuf.Tools" Version="3.28.1" />-->
+    <!--<PackageReference Include="Google.Protobuf.Tools" Version="3.28.1" />-->
   </ItemGroup>
 
   <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
