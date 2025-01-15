@@ -14,51 +14,56 @@ namespace Onnx.Formatting
             internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> Tensor =
                 new ColumnSpec<ValueInfoProto>[]
                 {
-                    new ("Name",       Align.Left,  i => i.Name),
-                    new ("Type",       Align.Left,  i => i.Type.ValueCase.ToString()),
-                    new ("ElemType",   Align.Left,  i => i.Type.TensorType.ElemType().ToString()),
-                    new ("Shape",      Align.Right, i => FormatShape(i.Type.TensorType.Shape)),
+                    new ("Name",        Align.Left,  i => i.Name),
+                    new ("Type",        Align.Left,  i => i.Type.ValueCase.ToString()),
+                    new ("ElemType",    Align.Left,  i => i.Type.TensorType.ElemType().ToString()),
+                    new ("Shape",       Align.Right, i => FormatShape(i.Type.TensorType.Shape)),
                     new ("Π(Shape)",    Align.Right, i => FormatShapeProduct(i.Type.TensorType.Shape)),
-                    new ("SizeInFile", Align.Right, i => i.CalculateSize().ToString()),
+                    new ("SizeInBytes", Align.Right, i => SizeInBytes(i.Type.TensorType)),
+                    new ("SizeInFile",  Align.Right, i => i.CalculateSize().ToString()),
                 };
 
             internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> Sequence =
                 new ColumnSpec<ValueInfoProto>[]
                 {
-                    new ("Name",       Align.Left, i => i.Name),
-                    new ("Type",       Align.Left, i => i.Type.ValueCase.ToString()),
-                    new ("ElemType",   Align.Left, i => i.Type.SequenceType.ElemType.ValueCase.ToString()),
-                    new ("SizeInFile", Align.Left, i => i.CalculateSize().ToString()),
+                    new ("Name",        Align.Left, i => i.Name),
+                    new ("Type",        Align.Left, i => i.Type.ValueCase.ToString()),
+                    new ("ElemType",    Align.Left, i => i.Type.SequenceType.ElemType.ValueCase.ToString()),
+                    new ("SizeInBytes", Align.Right, i => SizeInBytes(i.Type.TensorType)),
+                    new ("SizeInFile",  Align.Right, i => i.CalculateSize().ToString()),
                 };
 
             internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> Map =
                 new ColumnSpec<ValueInfoProto>[]
                 {
-                    new ("Name",       Align.Left, i => i.Name),
-                    new ("Type",       Align.Left, i => i.Type.ValueCase.ToString()),
-                    new ("KeyType",    Align.Left, i => i.Type.MapType.KeyType().ToString()),
-                    new ("ValueType",  Align.Left, i => i.Type.MapType.ValueType.ValueCase.ToString()),
-                    new ("SizeInFile", Align.Left, i => i.CalculateSize().ToString()),
+                    new ("Name",        Align.Left, i => i.Name),
+                    new ("Type",        Align.Left, i => i.Type.ValueCase.ToString()),
+                    new ("KeyType",     Align.Left, i => i.Type.MapType.KeyType().ToString()),
+                    new ("ValueType",   Align.Left, i => i.Type.MapType.ValueType.ValueCase.ToString()),
+                    new ("SizeInBytes", Align.Right, i => SizeInBytes(i.Type.TensorType)),
+                    new ("SizeInFile",  Align.Right, i => i.CalculateSize().ToString()),
                 };
 
             internal static readonly IReadOnlyList<ColumnSpec<ValueInfoProto>> None =
                 new ColumnSpec<ValueInfoProto>[]
                 {
-                    new ("Name",       Align.Left, i => i.Name),
-                    new ("Type",       Align.Left, i => i.Type.ValueCase.ToString()),
-                    new ("SizeInFile", Align.Left, i => i.CalculateSize().ToString()),
+                    new ("Name",        Align.Left, i => i.Name),
+                    new ("Type",        Align.Left, i => i.Type.ValueCase.ToString()),
+                    new ("SizeInBytes", Align.Right, i => SizeInBytes(i.Type.TensorType)),
+                    new ("SizeInFile",  Align.Right, i => i.CalculateSize().ToString()),
                 };
         }
 
         internal static readonly IReadOnlyList<ColumnSpec<TensorProto>> Tensor =
             new ColumnSpec<TensorProto>[]
             {
-                new ("Name",       Align.Left,  t => t.Name),
-                new ("DataType",   Align.Left,  t => t.DataType().ToString()),
-                new ("Dims",       Align.Right, t => string.Join("x", t.Dims)),
-                new ("Π(Dims)",    Align.Right, t => t.Dims.Product().ToString()),
+                new ("Name",        Align.Left,  t => t.Name),
+                new ("DataType",    Align.Left,  t => t.DataType().ToString()),
+                new ("Dims",        Align.Right, t => string.Join("x", t.Dims)),
+                new ("Π(Dims)",     Align.Right, t => t.Dims.Product().ToString()),
                 new ("[v0,v1..vN] | (Min,Mean,Max)", Align.Right, t => FormatValuesOrStats(t)),
-                new ("SizeInFile", Align.Right, t => t.CalculateSize().ToString()),
+                new ("SizeInBytes", Align.Right, t => SizeInBytes(t.DataType(), t.Dims)),
+                new ("SizeInFile",  Align.Right, t => t.CalculateSize().ToString()),
             };
 
         static string FormatShape(TensorShapeProto shape)
@@ -68,12 +73,62 @@ namespace Onnx.Formatting
 
         static string FormatShapeProduct(TensorShapeProto shape)
         {
-            var dimParams = shape.Dim.Where(d => d.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimParam)
-                .Select(d => d.DimParam).ToArray();
-            var dimValues = shape.Dim.Where(d => d.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue)
+            var dimValuesProduct = GetDimValuesProduct(shape);
+            return FormatShapeProduct(shape, dimValuesProduct);
+        }
+
+        static string SizeInBytes(TypeProto.Types.Tensor tensorType)
+        {
+            var bytesPerElement = ByteCount(tensorType.ElemType());
+            var dimValuesProduct = GetDimValuesProduct(tensorType.Shape);
+            var sizeInBytes = bytesPerElement * dimValuesProduct;
+            return sizeInBytes.ToString();
+        }
+
+        static string SizeInBytes(TensorProto.Types.DataType dataType, IReadOnlyList<long> dims)
+        {
+            var bytesPerElement = ByteCount(dataType);
+            var dimsProduct = dims.Product();
+            var sizeInBytes = bytesPerElement * dimsProduct;
+            return sizeInBytes.ToString();
+        }
+
+        static int ByteCount(TensorProto.Types.DataType dataType) => dataType switch
+        {
+            TensorProto.Types.DataType.Double => sizeof(double),
+            TensorProto.Types.DataType.Float => sizeof(float),
+            TensorProto.Types.DataType.Float16 => 2,
+            TensorProto.Types.DataType.Bfloat16 => 2,
+            TensorProto.Types.DataType.Float8E5M2 => 1,
+            TensorProto.Types.DataType.Float8E5M2Fnuz => 1,
+            TensorProto.Types.DataType.Float8E4M3Fn => 1,
+            TensorProto.Types.DataType.Float8E4M3Fnuz => 1,
+            TensorProto.Types.DataType.Int64 => sizeof(long),
+            TensorProto.Types.DataType.Uint64 => sizeof(ulong),
+            TensorProto.Types.DataType.Int32 => sizeof(int),
+            TensorProto.Types.DataType.Uint32 => sizeof(uint),
+            TensorProto.Types.DataType.Int16 => sizeof(short),
+            TensorProto.Types.DataType.Uint16 => sizeof(ushort),
+            TensorProto.Types.DataType.Int8 => sizeof(sbyte),
+            TensorProto.Types.DataType.Uint8 => sizeof(byte),
+            _ => throw new NotSupportedException(dataType.ToString()),
+        };
+
+        static long GetDimValuesProduct(TensorShapeProto shape)
+        {
+            var dimValues = shape.Dim
+                .Where(d => d.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue)
                 .Select(d => d.DimValue).ToArray();
             var dimValuesProduct = dimValues.Product();
-            var dimAll = dimParams.Concat(new[] { dimValuesProduct.ToString() });
+            return dimValuesProduct;
+        }
+
+        static string FormatShapeProduct(TensorShapeProto shape, long product)
+        {
+            var dimParams = shape.Dim
+                .Where(d => d.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimParam)
+                .Select(d => d.DimParam).ToArray();
+            var dimAll = dimParams.Concat([product.ToString()]);
             return string.Join("x", dimAll);
         }
 
