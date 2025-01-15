@@ -18,6 +18,7 @@ namespace Onnx.Formatting
                     new ("Type",       Align.Left,  i => i.Type.ValueCase.ToString()),
                     new ("ElemType",   Align.Left,  i => i.Type.TensorType.ElemType().ToString()),
                     new ("Shape",      Align.Right, i => FormatShape(i.Type.TensorType.Shape)),
+                    new ("Π(Shape)",    Align.Right, i => FormatShapeProduct(i.Type.TensorType.Shape)),
                     new ("SizeInFile", Align.Right, i => i.CalculateSize().ToString()),
                 };
 
@@ -65,6 +66,17 @@ namespace Onnx.Formatting
             return string.Join("x", shape.Dim.Select(d => Format(d)));
         }
 
+        static string FormatShapeProduct(TensorShapeProto shape)
+        {
+            var dimParams = shape.Dim.Where(d => d.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimParam)
+                .Select(d => d.DimParam).ToArray();
+            var dimValues = shape.Dim.Where(d => d.ValueCase == TensorShapeProto.Types.Dimension.ValueOneofCase.DimValue)
+                .Select(d => d.DimValue).ToArray();
+            var dimValuesProduct = dimValues.Product();
+            var dimAll = dimParams.Concat(new[] { dimValuesProduct.ToString() });
+            return string.Join("x", dimAll);
+        }
+
         static string Format(TensorShapeProto.Types.Dimension d) => d.ValueCase switch
         {
             TensorShapeProto.Types.Dimension.ValueOneofCase.DimParam => d.DimParam,
@@ -109,7 +121,7 @@ namespace Onnx.Formatting
             const int MaxValueCountToShow = 4;
             if (count <= MaxValueCountToShow)
             {
-                return useRawData 
+                return useRawData
                     ? FormatValues(rawValues.ToArray())
                     : FormatValues(values);
             }
@@ -135,7 +147,7 @@ namespace Onnx.Formatting
             delegate*<T, T, T> min,
             Func<TMean, T, TMean> add,
             Func<TMean, int, TMean> divide,
-            delegate*<T, T, T> max) 
+            delegate*<T, T, T> max)
             where T : struct
         {
             T minValue = values[0];

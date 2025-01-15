@@ -39,7 +39,7 @@ namespace Onnx
             MarkdownFormatter.Format(graph.Initializer, writer);
 
             writer.WriteLine();
-            writer.WriteLine("## Value Infos");
+            writer.WriteLine("## Value Infos (Intermediate Outputs/Feature Maps etc.)");
             Info(graph.ValueInfo, writer);
         }
 
