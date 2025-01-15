@@ -7,7 +7,8 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <TargetFrameworks>net462;net8.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'" >net462</TargetFrameworks>
+    <TargetFrameworks>$(TargetFrameworks);net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,13 +21,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.6.0" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.7.1" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.7.1" />
   </ItemGroup>
 
   <ItemGroup Condition="$(TargetFramework) == 'net462'">
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="9.0.1" />
   </ItemGroup>
 
   <!-- Change logical name of all embedded resources to be like file system paths. -->

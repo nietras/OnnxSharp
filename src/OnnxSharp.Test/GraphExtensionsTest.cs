@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,6 +35,7 @@ namespace OnnxSharp.Test
             var actual = model.Graph.Info();
 
             // Assert
+            Trace.WriteLine(actual);
             var expected = ExpectedInfo;
             Assert.AreEqual(expected, actual);
         }
@@ -116,56 +118,56 @@ namespace OnnxSharp.Test
 
         const string ExpectedInfo = @"## Inputs without Initializer
 ### Tensors
-|Name  |Type      |ElemType|Shape    |SizeInFile|
-|:-----|:---------|:-------|--------:|---------:|
-|Input3|TensorType|Float   |1x1x28x28|        32|
+|Name  |Type      |ElemType|Shape    |Π(Shape)|SizeInBytes|SizeInFile|
+|:-----|:---------|:-------|--------:|-------:|----------:|---------:|
+|Input3|TensorType|Float   |1x1x28x28|     784|       3136|        32|
 
 ## Outputs
 ### Tensors
-|Name            |Type      |ElemType|Shape|SizeInFile|
-|:---------------|:---------|:-------|----:|---------:|
-|Plus214_Output_0|TensorType|Float   | 1x10|        34|
+|Name            |Type      |ElemType|Shape|Π(Shape)|SizeInBytes|SizeInFile|
+|:---------------|:---------|:-------|----:|-------:|----------:|---------:|
+|Plus214_Output_0|TensorType|Float   | 1x10|      10|         40|        34|
 
 ## Inputs with Initializer
 ### Tensors
-|Name                              |Type      |ElemType|Shape    |SizeInFile|
-|:---------------------------------|:---------|:-------|--------:|---------:|
-|Parameter5                        |TensorType|Float   |  8x1x5x5|        36|
-|Parameter6                        |TensorType|Float   |    8x1x1|        32|
-|Parameter87                       |TensorType|Float   | 16x8x5x5|        37|
-|Parameter88                       |TensorType|Float   |   16x1x1|        33|
-|Pooling160_Output_0_reshape0_shape|TensorType|Int64   |        2|        48|
-|Parameter193                      |TensorType|Float   |16x4x4x10|        38|
-|Parameter193_reshape1_shape       |TensorType|Int64   |        2|        41|
-|Parameter194                      |TensorType|Float   |     1x10|        30|
+|Name                              |Type      |ElemType|Shape    |Π(Shape)|SizeInBytes|SizeInFile|
+|:---------------------------------|:---------|:-------|--------:|-------:|----------:|---------:|
+|Parameter5                        |TensorType|Float   |  8x1x5x5|     200|        800|        36|
+|Parameter6                        |TensorType|Float   |    8x1x1|       8|         32|        32|
+|Parameter87                       |TensorType|Float   | 16x8x5x5|    3200|      12800|        37|
+|Parameter88                       |TensorType|Float   |   16x1x1|      16|         64|        33|
+|Pooling160_Output_0_reshape0_shape|TensorType|Int64   |        2|       2|         16|        48|
+|Parameter193                      |TensorType|Float   |16x4x4x10|    2560|      10240|        38|
+|Parameter193_reshape1_shape       |TensorType|Int64   |        2|       2|         16|        41|
+|Parameter194                      |TensorType|Float   |     1x10|      10|         40|        30|
 
 ## Initializers (Parameters etc.)
-|Name                              |DataType|Dims     |Π(Dims)|[v0,v1..vN] | (Min,Mean,Max)        |SizeInFile|
-|:---------------------------------|:-------|--------:|------:|-----------------------------------:|---------:|
-|Parameter193                      |Float   |16x4x4x10|   2560|(-7.595E-001,-1.779E-003,1.186E+000)|     10265|
-|Parameter87                       |Float   | 16x8x5x5|   3200|(-5.089E-001,-3.028E-002,5.647E-001)|     12824|
-|Parameter5                        |Float   |  8x1x5x5|    200|(-9.727E-001,-7.360E-003,1.019E+000)|       823|
-|Parameter6                        |Float   |    8x1x1|      8|(-4.338E-001,-1.023E-001,9.164E-002)|        53|
-|Parameter88                       |Float   |   16x1x1|     16|(-4.147E-001,-1.554E-001,1.328E-002)|        86|
-|Pooling160_Output_0_reshape0_shape|Int64   |        2|      2|                             [1,256]|        46|
-|Parameter193_reshape1_shape       |Int64   |        2|      2|                            [256,10]|        39|
-|Parameter194                      |Float   |     1x10|     10|(-1.264E-001,-4.777E-006,1.402E-001)|        62|
+|Name                              |DataType|Dims     |Π(Dims)|[v0,v1..vN] | (Min,Mean,Max)        |SizeInBytes|SizeInFile|
+|:---------------------------------|:-------|--------:|------:|-----------------------------------:|----------:|---------:|
+|Parameter193                      |Float   |16x4x4x10|   2560|(-7.595E-001,-1.779E-003,1.186E+000)|      10240|     10265|
+|Parameter87                       |Float   | 16x8x5x5|   3200|(-5.089E-001,-3.028E-002,5.647E-001)|      12800|     12824|
+|Parameter5                        |Float   |  8x1x5x5|    200|(-9.727E-001,-7.360E-003,1.019E+000)|        800|       823|
+|Parameter6                        |Float   |    8x1x1|      8|(-4.338E-001,-1.023E-001,9.164E-002)|         32|        53|
+|Parameter88                       |Float   |   16x1x1|     16|(-4.147E-001,-1.554E-001,1.328E-002)|         64|        86|
+|Pooling160_Output_0_reshape0_shape|Int64   |        2|      2|                             [1,256]|         16|        46|
+|Parameter193_reshape1_shape       |Int64   |        2|      2|                            [256,10]|         16|        39|
+|Parameter194                      |Float   |     1x10|     10|(-1.264E-001,-4.777E-006,1.402E-001)|         40|        62|
 
-## Value Infos
+## Value Infos (Intermediate Outputs/Feature Maps etc.)
 ### Tensors
-|Name                        |Type      |ElemType|Shape     |SizeInFile|
-|:---------------------------|:---------|:-------|---------:|---------:|
-|Parameter193_reshape1       |TensorType|Float   |    256x10|        40|
-|Convolution28_Output_0      |TensorType|Float   | 1x8x28x28|        48|
-|Plus30_Output_0             |TensorType|Float   | 1x8x28x28|        41|
-|ReLU32_Output_0             |TensorType|Float   | 1x8x28x28|        41|
-|Pooling66_Output_0          |TensorType|Float   | 1x8x14x14|        44|
-|Convolution110_Output_0     |TensorType|Float   |1x16x14x14|        49|
-|Plus112_Output_0            |TensorType|Float   |1x16x14x14|        42|
-|ReLU114_Output_0            |TensorType|Float   |1x16x14x14|        42|
-|Pooling160_Output_0         |TensorType|Float   |  1x16x4x4|        45|
-|Pooling160_Output_0_reshape0|TensorType|Float   |     1x256|        47|
-|Times212_Output_0           |TensorType|Float   |      1x10|        35|
+|Name                        |Type      |ElemType|Shape     |Π(Shape)|SizeInBytes|SizeInFile|
+|:---------------------------|:---------|:-------|---------:|-------:|----------:|---------:|
+|Parameter193_reshape1       |TensorType|Float   |    256x10|    2560|      10240|        40|
+|Convolution28_Output_0      |TensorType|Float   | 1x8x28x28|    6272|      25088|        48|
+|Plus30_Output_0             |TensorType|Float   | 1x8x28x28|    6272|      25088|        41|
+|ReLU32_Output_0             |TensorType|Float   | 1x8x28x28|    6272|      25088|        41|
+|Pooling66_Output_0          |TensorType|Float   | 1x8x14x14|    1568|       6272|        44|
+|Convolution110_Output_0     |TensorType|Float   |1x16x14x14|    3136|      12544|        49|
+|Plus112_Output_0            |TensorType|Float   |1x16x14x14|    3136|      12544|        42|
+|ReLU114_Output_0            |TensorType|Float   |1x16x14x14|    3136|      12544|        42|
+|Pooling160_Output_0         |TensorType|Float   |  1x16x4x4|     256|       1024|        45|
+|Pooling160_Output_0_reshape0|TensorType|Float   |     1x256|     256|       1024|        47|
+|Times212_Output_0           |TensorType|Float   |      1x10|      10|         40|        35|
 ";
     }
 }
