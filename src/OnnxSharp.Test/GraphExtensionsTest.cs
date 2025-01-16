@@ -142,7 +142,7 @@ namespace OnnxSharp.Test
 |Parameter194                      |TensorType|Float   |     1x10|      10|         40|        30|
 
 ## Initializers (Parameters etc.)
-|Name                              |DataType|Dims     |Π(Dims)|[v0,v1..vN] | (Min,Mean,Max)        |SizeInBytes|SizeInFile|
+|Name                              |DataType|Dims     |Π(Dims)|[v0,v1..vN] or (Min,Mean,Max)       |SizeInBytes|SizeInFile|
 |:---------------------------------|:-------|--------:|------:|-----------------------------------:|----------:|---------:|
 |Parameter193                      |Float   |16x4x4x10|   2560|(-7.595E-001,-1.779E-003,1.186E+000)|      10240|     10265|
 |Parameter87                       |Float   | 16x8x5x5|   3200|(-5.089E-001,-3.028E-002,5.647E-001)|      12800|     12824|
