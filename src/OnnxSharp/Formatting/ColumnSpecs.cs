@@ -61,7 +61,7 @@ namespace Onnx.Formatting
                 new ("DataType",    Align.Left,  t => t.DataType().ToString()),
                 new ("Dims",        Align.Right, t => string.Join("x", t.Dims)),
                 new ("Π(Dims)",     Align.Right, t => t.Dims.Product().ToString()),
-                new ("[v0,v1..vN] | (Min,Mean,Max)", Align.Right, t => FormatValuesOrStats(t)),
+                new ("[v0,v1..vN] or (Min,Mean,Max)", Align.Right, t => FormatValuesOrStats(t)),
                 new ("SizeInBytes", Align.Right, t => SizeInBytes(t.DataType(), t.Dims)),
                 new ("SizeInFile",  Align.Right, t => t.CalculateSize().ToString()),
             };
